@@ -1546,23 +1546,23 @@
         </socket-binding-group>
     </socket-binding-groups>
     <server-groups>
-        <server-group name="development" profile="full-ha">
+        <server-group name="development" profile="default">
             <jvm name="default">
                 <heap size="64m" max-size="512m"/>
             </jvm>
-            <socket-binding-group ref="full-ha-sockets"/>
+            <socket-binding-group ref="standard-sockets"/>
         </server-group>
-        <server-group name="staging" profile="full">
+        <server-group name="staging" profile="default">
             <jvm name="default">
                 <heap size="64m" max-size="512m"/>
             </jvm>
-            <socket-binding-group ref="full-sockets"/>
+            <socket-binding-group ref="standard-sockets"/>
         </server-group>
-        <server-group name="production" profile="ha">
+        <server-group name="production" profile="default">
             <jvm name="default">
                 <heap size="64m" max-size="512m"/>
             </jvm>
-            <socket-binding-group ref="ha-sockets"/>
+            <socket-binding-group ref="standard-sockets"/>
         </server-group>
     </server-groups>
 </domain>
