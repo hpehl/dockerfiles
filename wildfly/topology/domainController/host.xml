@@ -79,14 +79,20 @@
     </jvms>
 
     <servers>
-        <server name="homer" group="development"/>
-        <server name="bart" group="development" auto-start="true">
-            <socket-bindings port-offset="250"/>
+        <server name="homer" group="development" auto-start="false">
+            <socket-bindings port-offset="50"/>
         </server>
-        <server name="maggie" group="staging"/>
-        <server name="marge" group="production"/>
-        <server name="lisa" group="production" auto-start="true">
+        <server name="bart" group="development" auto-start="true">
+            <socket-bindings port-offset="100"/>
+        </server>
+        <server name="maggie" group="staging" auto-start="false">
             <socket-bindings port-offset="150"/>
+        </server>
+        <server name="marge" group="production" auto-start="false">
+            <socket-bindings port-offset="200"/>
+        </server>
+        <server name="lisa" group="production" auto-start="true">
+            <socket-bindings port-offset="250"/>
         </server>    
     </servers>
 </host>

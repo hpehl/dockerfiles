@@ -82,11 +82,10 @@
     </jvms>
 
     <servers>
-        <server name="anu" group="development"/>
-        <server name="manjula" group="staging"/>
+        <server name="anu" group="development" auto-start="false"/>
+        <server name="manjula" group="staging" auto-start="false"/>
         <server name="sashi" group="production" auto-start="true">
-            <socket-bindings port-offset="22"/>
+            <socket-bindings port-offset="50"/>
         </server>
     </servers>
 </host>
-
