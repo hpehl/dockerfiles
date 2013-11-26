@@ -1,4 +1,4 @@
-# Ubuntu with Java 7, WildFly Beta3 and an management user "admin:passw0rd_"
+# Ubuntu with Java 7, WildFly Beta3
 
 FROM ubuntu
 
