@@ -2,7 +2,7 @@
 #   - using three groups (development, staging, production)
 #   - and five servers (homer, marge, bart, lisa, maggie)
 
-FROM hpehl/wildfly:latest
+FROM hpehl/wildfly
 
 MAINTAINER Harald Pehl <harald.pehl@gmail.com>
 

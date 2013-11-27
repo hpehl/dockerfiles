@@ -7,7 +7,7 @@
 #     linked using the name "dc"
 #   - The domain controller must contain the user "dc:passw0rd_" 
 
-FROM hpehl/wildfly:latest
+FROM hpehl/wildfly
 
 MAINTAINER Harald Pehl <harald.pehl@gmail.com>
 

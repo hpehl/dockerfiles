@@ -2,7 +2,7 @@
 #   - using three groups (development, staging, production)
 #   - and five servers (homer, marge, bart, lisa, maggie)
 
-FROM hpehl/eap62:cr3
+FROM hpehl/eap62
 
 MAINTAINER Harald Pehl <harald.pehl@gmail.com>
 

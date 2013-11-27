@@ -7,7 +7,7 @@
 #     linked using the name "dc"
 #   - The domain controller must contain the user "dc:passw0rd_" 
 
-FROM hpehl/eap62:cr3
+FROM hpehl/eap62
 
 MAINTAINER Harald Pehl <harald.pehl@gmail.com>
 
