@@ -6,4 +6,4 @@ IPADDR=$(ip a s | sed -ne '/127.0.0.1/!{s/^[ \t]*inet[ \t]*\([0-9.]\+\)\/.*$/\1/
 #      docker run -name wildfly-dc -d hpehl/wildfly-domain:dc
 #   2) This container 
 #      docker run -name hostX -link wildfly-dc:dc -d hpehl/wildfly-domain:hostX
-/wildfly-8.0.0.Beta1/bin/domain.sh -Djboss.dc.address=${DC_PORT_9999_TCP_ADDR} -Djboss.bind.address=$IPADDR -Djboss.bind.address.management=$IPADDR
+/wildfly/bin/domain.sh -Djboss.dc.address=${DC_PORT_9999_TCP_ADDR} -Djboss.bind.address=$IPADDR -Djboss.bind.address.management=$IPADDR

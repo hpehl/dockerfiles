@@ -1,10 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<host name="simpson" xmlns="urn:jboss:domain:2.0">
+<host name="chief-wiggum" xmlns="urn:jboss:domain:2.0">
 
     <management>
         <security-realms>
             <security-realm name="ManagementRealm">
+                <server-identities>
+                     <secret value="cGFzc3cwcmRf" />
+                </server-identities>
                 <authentication>
                     <local default-user="$local"/>
                     <properties path="mgmt-users.properties" relative-to="jboss.domain.config.dir"/>
@@ -53,7 +56,7 @@
     </management>
 
     <domain-controller>
-        <local/>
+        <remote host="${jboss.dc.address}" port="${jboss.dc.port:9999}" username="dc" security-realm="ManagementRealm"/>
     </domain-controller>
 
     <interfaces>
@@ -79,21 +82,9 @@
     </jvms>
 
     <servers>
-        <server name="homer" group="development" auto-start="false">
+        <server name="ralph" group="development" auto-start="true">
             <socket-bindings port-offset="50"/>
         </server>
-        <server name="bart" group="development" auto-start="true">
-            <socket-bindings port-offset="100"/>
-        </server>
-        <server name="maggie" group="staging" auto-start="false">
-            <socket-bindings port-offset="150"/>
-        </server>
-        <server name="marge" group="production" auto-start="false">
-            <socket-bindings port-offset="200"/>
-        </server>
-        <server name="lisa" group="production" auto-start="true">
-            <socket-bindings port-offset="250"/>
-        </server>    
+        <server name="clancy" group="production" auto-start="false"/>
     </servers>
 </host>
-

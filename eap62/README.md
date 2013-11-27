@@ -1,0 +1,1 @@
+The dockerfiles in these folders require an EAP 6.2.x zip to be present. This zip is _not_ included in this repository. If you want to use the Dockerfiles you have to provide the zip on your own!
