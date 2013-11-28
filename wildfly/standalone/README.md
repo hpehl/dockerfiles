@@ -4,4 +4,4 @@ Dockerfile to setup a WildFly standalone server. The standalone server exposes t
 - 9990 for HTTP based management and
 - 9999 for native management
 
-You can use the user user `admin:passw0rd_` to access the management interfaces.
+You can use the user `admin:passw0rd_` to access the management interfaces.
