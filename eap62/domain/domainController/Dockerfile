@@ -1,4 +1,4 @@
-# Starts a EAP domain controller named "simpsons"
+# Starts an EAP domain controller named "simpsons"
 #   - using three groups (development, staging, production)
 #   - and five servers (homer, marge, bart, lisa, maggie)
 
