@@ -21,3 +21,10 @@ RUN wget http://download.jboss.org/wildfly/8.0.0.Beta1/wildfly-8.0.0.Beta1.tar.g
 RUN tar -xf wildfly-8.0.0.Beta1.tar.gz 
 RUN rm wildfly-8.0.0.Beta1.tar.gz 
 RUN ln -s wildfly-8.* wildfly
+
+# Use these commands if you want to use the latest stable WildFly build
+# RUN apt-get -y install unzip
+# RUN wget https://ci.jboss.org/hudson/job/WildFly-latest-master/lastSuccessfulBuild/artifact/build/target/wildfly-8.x.zip
+# RUN unzip wildfly-8.x.zip
+# RUN rm wildfly-8.x.zip
+# RUN ln -s wildfly-8.* wildfly
