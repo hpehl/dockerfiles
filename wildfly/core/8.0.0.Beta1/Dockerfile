@@ -1,4 +1,4 @@
-# Container based on Ubuntu with Java 7 and WildFly Beta3
+# Container based on Ubuntu with Java 7 and WildFly Beta1
 # WildFly is downloaded and extracted to /wildfly
 
 FROM ubuntu
