@@ -13,6 +13,6 @@ Follow these steps to build EAP images:
 
 3. Create an image called `hpehl/eap62`
 
-        docker build -t "hpehl/eap62"
+        docker build -t "hpehl/eap62" eap62/core/
 
 4. You can now use the other Dockerfiles in `domain` and `standalone` which are based on `hpehl/eap62`.
