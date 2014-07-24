@@ -7,8 +7,8 @@ FROM jboss/wildfly
 MAINTAINER Harald Pehl <harald.pehl@gmail.com>
 
 # Add user
-RUN /wildfly/bin/add-user.sh admin passw0rd_  --silent
-RUN /wildfly/bin/add-user.sh dc passw0rd_  --silent
+RUN /opt/wildfly/bin/add-user.sh admin passw0rd_  --silent
+RUN /opt/wildfly/bin/add-user.sh dc passw0rd_  --silent
 
 # Add files
 ADD domain.xml /opt/wildfly/domain/configuration/
