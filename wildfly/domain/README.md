@@ -24,4 +24,4 @@ Notes:
 - All hosts exposes the standard ports
   - 8080 for HTTP
   - 9990 for management
-- The domain controller defines the user `admin:passw0rd_`
+- Use `admin:passw0rd_` to connect to the management interfaces (CLI / console)

@@ -11,6 +11,8 @@ FROM jboss/wildfly
 
 MAINTAINER Harald Pehl <harald.pehl@gmail.com>
 
+USER wildfly
+
 ADD domain.xml /opt/wildfly/domain/configuration/
 ADD host.xml /opt/wildfly/domain/configuration/
 
