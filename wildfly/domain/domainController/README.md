@@ -1,13 +1,12 @@
 Dockerfiles based on [jboss/wildfly](https://registry.hub.docker.com/u/jboss/wildfly/) to setup a 'Simpsons' domain:
 
-| Hosts &larr;         | simpson (dc)      | apu                | van-hauten       | skinner        | chief-wiggum |
-| Server Groups &darr; |                   |                    |                  |                |              |
-|----------------------|-------------------|--------------------|------------------|----------------|--------------|
-| development          | homer             | anu                | kirk&uarr;       | agnes          | ralph&uarr;  |
-|                      | bart&uarr; (+50)  |                    |                  |                |              |
-| staging              | maggie (+100)     | manjula (+50)      | luanna (+50)     |                | clancy (+50) |
-| production           | marge (+150)      | sashi&uarr; (+100) | millhouse (+100) | seymour↑ (+50) |              |
-|                      | lisa&uarr; (+200) |                    |                  |                |              |
+| Hosts&nbsp;&rarr;<br>Server Groups&nbsp;&darr; | simpson (dc)      | apu                | van-hauten       | skinner        | chief-wiggum |
+|------------------------------------------------|-------------------|--------------------|------------------|----------------|--------------|
+| **development**                                | homer             | anu                | kirk&uarr;       | agnes          | ralph&uarr;  |
+|                                                | bart&uarr; (+50)  |                    |                  |                |              |
+| **staging**                                    | maggie (+100)     | manjula (+50)      | luanna (+50)     |                | clancy (+50) |
+| **production**                                 | marge (+150)      | sashi&uarr; (+100) | millhouse (+100) | seymour↑ (+50) |              |
+|                                                | lisa&uarr; (+200) |                    |                  |                |              |
 
 &uarr; means autostart = true
 
