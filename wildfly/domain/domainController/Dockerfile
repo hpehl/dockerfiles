@@ -16,4 +16,4 @@ ADD host.xml /opt/wildfly/domain/configuration/
 
 # and launch
 EXPOSE 8080 9990
-CMD ["/opt/wildfly/bin/domain.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
+ENTRYPOINT ["/opt/wildfly/bin/domain.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
