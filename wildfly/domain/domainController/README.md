@@ -1,59 +1,33 @@
 Dockerfiles based on [jboss/wildfly](https://registry.hub.docker.com/u/jboss/wildfly/) to setup a 'Simpsons' domain:
 
-<table>
-<thead>
-<tr>
-  <th>Hosts&nbsp;&rarr;<br>Server Groups&nbsp;&darr;</th>
-  <th>simpson (dc)</th>
-  <th>apu</th>
-  <th>van-hauten</th>
-  <th>skinner</th>
-  <th>chief-wiggum</th>
-</tr>
-</thead>
-<tbody>
-<tr style="background-color: #f6f6f6">
-  <td><b>development</b></td>
-  <td>homer</td>
-  <td>anu</td>
-  <td>kirk&uarr;</td>
-  <td>agnes</td>
-  <td>ralph&uarr;</td>
-</tr>
-<tr style="background-color: #f6f6f6">
-  <td>&nbsp;</td>
-  <td>bart&uarr; <span style="color: #999">(+50)</span></td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-</tr>
-<tr>
-  <td><b>staging</b></td>
-  <td>maggie <span style="color: #999">(+100)</span></td>
-  <td>manjula <span style="color: #999">(+50)</span></td>
-  <td>luanna <span style="color: #999">(+50)</span></td>
-  <td>&nbsp;</td>
-  <td>clancy <span style="color: #999">(+50)</span></td>
-</tr>
-<tr style="background-color: #f6f6f6">
-  <td><b>production</b></td>
-  <td>marge <span style="color: #999">(+150)</span></td>
-  <td>sashi&uarr; <span style="color: #999">(+100)</span></td>
-  <td>millhouse <span style="color: #999">(+100)</span></td>
-  <td>seymour&uarr; <span style="color: #999">(+50)</span></td>
-  <td>&nbsp;</td>
-</tr>
-<tr style="background-color: #f6f6f6">
-  <td>&nbsp;</td>
-  <td>lisa&uarr; <span style="color: #999">(+2000)</span></td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-</tr>
-</tbody>
-</table>
+#### Server Groups
+
+- development
+- staging
+- production
+
+#### Hosts / Servers
+
+- simpsons (dc)
+  - homer (development)
+  - bart (&uarr; +50 - development)
+  - maggie (+100 - staging)
+  - marge (+150 - production)
+  - lisa (&uarr; +200 - production)
+- apu
+  - anu (development)
+  - manjula (+50 - staging)
+  - sashi (&uarr; +100 - production)
+- van-hauten
+  - kirk (&uarr - development)
+  - luanna (+50 - staging)
+  - millhouse (+100 - production)
+- skinner
+  - agnes (development)
+  - seymour (&uarr; +50 - production)
+- chief-wiggum
+  - ralph (&uarr; - development)
+  - staging (clancy +50 - staging)
 
 &uarr; means autostart = true
 
