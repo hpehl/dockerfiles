@@ -1,12 +1,59 @@
 Dockerfiles based on [jboss/wildfly](https://registry.hub.docker.com/u/jboss/wildfly/) to setup a 'Simpsons' domain:
 
-| Hosts&nbsp;&rarr;<br>Server Groups&nbsp;&darr; | simpson (dc)      | apu                | van-hauten       | skinner        | chief-wiggum |
-|------------------------------------------------|-------------------|--------------------|------------------|----------------|--------------|
-| **development**                                | homer             | anu                | kirk&uarr;       | agnes          | ralph&uarr;  |
-|                                                | bart&uarr; (+50)  |                    |                  |                |              |
-| **staging**                                    | maggie (+100)     | manjula (+50)      | luanna (+50)     |                | clancy (+50) |
-| **production**                                 | marge (+150)      | sashi&uarr; (+100) | millhouse (+100) | seymour↑ (+50) |              |
-|                                                | lisa&uarr; (+200) |                    |                  |                |              |
+<table>
+<thead>
+<tr>
+  <th>Hosts&nbsp;&rarr;<br>Server Groups&nbsp;&darr;</th>
+  <th>simpson (dc)</th>
+  <th>apu</th>
+  <th>van-hauten</th>
+  <th>skinner</th>
+  <th>chief-wiggum</th>
+</tr>
+</thead>
+<tbody>
+<tr style="background-color: #f6f6f6">
+  <td><b>development</b></td>
+  <td>homer</td>
+  <td>anu</td>
+  <td>kirk&uarr;</td>
+  <td>agnes</td>
+  <td>ralph&uarr;</td>
+</tr>
+<tr style="background-color: #f6f6f6">
+  <td>&nbsp;</td>
+  <td>bart&uarr; <span style="color: #999">(+50)</span></td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+</tr>
+<tr>
+  <td><b>staging</b></td>
+  <td>maggie <span style="color: #999">(+100)</span></td>
+  <td>manjula <span style="color: #999">(+50)</span></td>
+  <td>luanna <span style="color: #999">(+50)</span></td>
+  <td>&nbsp;</td>
+  <td>clancy <span style="color: #999">(+50)</span></td>
+</tr>
+<tr style="background-color: #f6f6f6">
+  <td><b>production</b></td>
+  <td>marge <span style="color: #999">(+150)</span></td>
+  <td>sashi&uarr; <span style="color: #999">(+100)</span></td>
+  <td>millhouse <span style="color: #999">(+100)</span></td>
+  <td>seymour&uarr; <span style="color: #999">(+50)</span></td>
+  <td>&nbsp;</td>
+</tr>
+<tr style="background-color: #f6f6f6">
+  <td>&nbsp;</td>
+  <td>lisa&uarr; <span style="color: #999">(+2000)</span></td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
 
 &uarr; means autostart = true
 
