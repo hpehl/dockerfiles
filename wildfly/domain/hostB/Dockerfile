@@ -11,10 +11,7 @@ FROM jboss/wildfly
 
 MAINTAINER Harald Pehl <harald.pehl@gmail.com>
 
-# Add files
 ADD domain.xml /opt/wildfly/domain/configuration/
 ADD host.xml /opt/wildfly/domain/configuration/
 
-# and launch
-EXPOSE 8080
-ENTRYPOINT ["/opt/wildfly/bin/domain.sh", "-Djboss.dc.address", "${DC_PORT_9999_TCP_ADDR}", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
+CMD ["/opt/wildfly/bin/domain.sh", "-Djboss.dc.address=dc", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
