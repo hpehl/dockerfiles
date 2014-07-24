@@ -2,7 +2,7 @@
 #   - using three groups (development, staging, production)
 #   - and five servers (homer, marge, bart, lisa, maggie)
 
-FROM hpehl/wildfly
+FROM jboss/wildfly
 
 MAINTAINER Harald Pehl <harald.pehl@gmail.com>
 
@@ -11,11 +11,9 @@ RUN /wildfly/bin/add-user.sh admin passw0rd_  --silent
 RUN /wildfly/bin/add-user.sh dc passw0rd_  --silent
 
 # Add files
-ADD domain.xml /wildfly/domain/configuration/
-ADD host.xml /wildfly/domain/configuration/
-ADD launch.sh /
-RUN chmod +x /launch.sh
+ADD domain.xml /opt/wildfly/domain/configuration/
+ADD host.xml /opt/wildfly/domain/configuration/
 
 # and launch
-ENTRYPOINT /launch.sh
-EXPOSE 8080 9990 9999
+EXPOSE 8080 9990
+CMD ["/opt/wildfly/bin/domain.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]

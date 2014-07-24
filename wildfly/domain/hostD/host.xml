@@ -82,9 +82,9 @@
     </jvms>
 
     <servers>
-        <server name="ralph" group="development" auto-start="true">
+        <server name="ralph" group="development" auto-start="true"/>
+        <server name="clancy" group="staging" auto-start="false">
             <socket-bindings port-offset="50"/>
         </server>
-        <server name="clancy" group="production" auto-start="false"/>
     </servers>
 </host>

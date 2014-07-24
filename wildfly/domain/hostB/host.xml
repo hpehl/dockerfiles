@@ -82,10 +82,12 @@
     </jvms>
 
     <servers>
-        <server name="kirk" group="development" auto-start="true">
+        <server name="kirk" group="development" auto-start="true"/>
+        <server name="luann" group="staging" auto-start="false">
             <socket-bindings port-offset="50"/>
         </server>
-        <server name="luann" group="staging" auto-start="false"/>
-        <server name="millhouse" group="production" auto-start="false"/>
+        <server name="millhouse" group="production" auto-start="false">
+            <socket-bindings port-offset="100"/>
+        </server>
     </servers>
 </host>
