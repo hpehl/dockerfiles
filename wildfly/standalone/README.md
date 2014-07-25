@@ -5,6 +5,6 @@ Dockerfile based on [jboss/wildfly](https://registry.hub.docker.com/u/jboss/wild
 
 Start WildFly using 
 
-    docker run -p 8080:8080 -p 9990:9990 --name="wildfly" -d hpehl/wildfly-standalone
+    docker run -p 8080:8080 -p 9990:9990 -d hpehl/wildfly-standalone
 
 You can connect to the management interfaces (CLI / console) using `admin:passw0rd_`. 
