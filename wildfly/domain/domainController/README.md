@@ -19,7 +19,7 @@ Dockerfiles based on [jboss/wildfly](https://registry.hub.docker.com/u/jboss/wil
   - manjula (+50 - staging)
   - sashi (&uarr; +100 - production)
 - van-hauten
-  - kirk (&uarr - development)
+  - kirk (&uarr; - development)
   - luanna (+50 - staging)
   - millhouse (+100 - production)
 - skinner
