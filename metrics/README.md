@@ -8,10 +8,10 @@ This repository contains a couple of Dockerfiles and a [JMeter](http://jmeter.ap
 
 The folder [wildfly](wildfly) contains Dockerfiles to setup a WildFly domain:
 
-| Hosts  &rarr;<br/>Groups &darr; | simpsons (dc) | apu     | van-hauten |
-|---------------------------------|---------------|---------|------------|
-| main-group                      |               | manjula |            |
-| other-group                     |               |         | kirk       |
+| Hosts  &rarr;<br/>Groups &darr; | master (dc) | slave      |
+|---------------------------------|-------------|------------|
+| main-group                      | server-one  |            |
+| other-group                     |             | server-two |
 
 In order to monitor JEE resources the setup includes two deployments from the [WildFly quickstarts](https://github.com/wildfly/quickstart):
 
