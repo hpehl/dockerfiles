@@ -84,12 +84,6 @@
     </jvms>
 
     <servers>
-        <server name="anu" group="development" auto-start="false"/>
-        <server name="manjula" group="staging" auto-start="false">
-            <socket-bindings port-offset="50"/>
-        </server>
-        <server name="sashi" group="production" auto-start="true">
-            <socket-bindings port-offset="100"/>
-        </server>
+        <server name="manjula" group="main-group" auto-start="true"/>
     </servers>
 </host>

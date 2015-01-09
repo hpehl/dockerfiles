@@ -3,7 +3,7 @@
 set -m
 CONFIG_FILE="/config/config.toml"
 API_URL="http://localhost:8086"
-DB_NAME="monitor"
+DB_NAMES="monitor;grafana"
 
 # Dynamically change the value of 'max-open-shards' to what 'ulimit -n' returns
 sed -i "s/^max-open-shards.*/max-open-shards = $(ulimit -n)/" ${CONFIG_FILE}
@@ -27,8 +27,12 @@ else
     done
     echo ""
 
-    echo "=> Creating database: ${DB_NAME}"
-    curl -s -k -X POST -d "{\"name\":\"${DB_NAME}\"}" $(echo ${API_URL}'/db?u=root&p='${PASS})
+    arr=$(echo ${DB_NAMES} | tr ";" "\n")
+    for x in $arr
+    do
+        echo "=> Creating database: ${x}"
+        curl -s -k -X POST -d "{\"name\":\"${x}\"}" $(echo ${API_URL}'/db?u=root&p='${PASS})
+    done
     echo ""
 
     touch "/data/.pre_db_created"

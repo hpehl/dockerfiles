@@ -11,7 +11,10 @@ FROM jboss/wildfly
 
 MAINTAINER Harald Pehl <harald.pehl@gmail.com>
 
-ADD domain.xml /opt/wildfly/domain/configuration/
-ADD host.xml /opt/wildfly/domain/configuration/
+ADD domain.xml /opt/jboss/wildfly/domain/configuration/
+ADD host.xml /opt/jboss/wildfly/domain/configuration/
+ADD wildfly-* /tmp/
 
-CMD ["/opt/wildfly/bin/domain.sh", "-Djboss.dc.address=dc", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
+RUN unzip -q /tmp/wildfly-monitor-module.zip -d /opt/jboss/wildfly
+
+CMD ["/opt/jboss/wildfly/bin/domain.sh", "-Djboss.dc.address=dc", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]

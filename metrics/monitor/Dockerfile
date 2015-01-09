@@ -1,4 +1,4 @@
-# TODO
+# Starts InfluxDB
 
 FROM fedora
 
@@ -9,8 +9,8 @@ RUN yum -y install sudo
 RUN wget -q http://s3.amazonaws.com/influxdb/influxdb-latest-1.x86_64.rpm
 RUN sudo rpm -ivh influxdb-latest-1.x86_64.rpm
 
-ADD config.toml /config/config.toml
-ADD run.sh /run.sh
+ADD influx/config.toml /config/config.toml
+ADD influx/run.sh /run.sh
 RUN chmod +x /*.sh
 
 # Admin server
