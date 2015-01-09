@@ -19,9 +19,6 @@ EXPOSE 8083
 # HTTP API
 EXPOSE 8086
 
-# HTTPS API
-EXPOSE 8084
-
 VOLUME ["/data"]
 
 CMD ["/run.sh"]

@@ -411,7 +411,8 @@
             </subsystem>
             <subsystem xmlns="urn:jboss:domain:weld:2.0"/>
             <subsystem xmlns="urn:org.rhq.metrics:wildfly-monitor:1.0">
-                <storage-adapter name="influx" url="${influx.url}" db="wildfly"/>
+                <!-- 'influx' is a named entry in '/etc/hosts' -->
+                <storage-adapter name="influx" url="http://influx:8086" db="monitor" user="root" password="root"/>
                 <server-monitor name="default" enabled="true" num-threads="2">
                     <data-input name="heap"
                                 seconds="10"

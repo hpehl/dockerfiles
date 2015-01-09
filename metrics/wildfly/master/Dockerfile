@@ -1,7 +1,3 @@
-# Starts a WildFly domain controller named "simpsons"
-#   - using two groups (main-group, other-group)
-#   - and no servers 
-
 FROM jboss/wildfly
 
 MAINTAINER Harald Pehl <harald.pehl@gmail.com>

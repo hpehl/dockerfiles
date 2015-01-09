@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<host name="apu" xmlns="urn:jboss:domain:2.1">
+<host name="slave" xmlns="urn:jboss:domain:2.1">
 
     <management>
         <security-realms>
@@ -58,7 +58,8 @@
     </management>
     
     <domain-controller>
-        <remote host="${jboss.dc.address}" port="${jboss.dc.port:9999}" username="dc" security-realm="SlaveRealm"/>
+        <!-- 'master' is a named entry in '/etc/hosts' -->
+        <remote host="master" port="9999" username="dc" security-realm="SlaveRealm"/>
     </domain-controller>
 
     <interfaces>
@@ -84,6 +85,6 @@
     </jvms>
 
     <servers>
-        <server name="manjula" group="main-group" auto-start="true"/>
+        <server name="server-two" group="other-group" auto-start="true"/>
     </servers>
 </host>
