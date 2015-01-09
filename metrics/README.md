@@ -18,11 +18,11 @@ In order to monitor JEE resources the setup includes two deployments from the [W
 1. [helloworld-mdb](https://github.com/wildfly/quickstart/tree/master/helloworld-mdb) deployed to `main-group`
 1. [kitchensink](https://github.com/wildfly/quickstart/tree/master/kitchensink) deployed to `other-group`
 
-In addition each server JVM is monitored wrt memory and active threads. The monitoring is done using the [wildfly-monitor](https://github.com/rhq-project/wildfly-monitor) subsystem and InfluxDB configured as storage adapter (see https://github.com/rhq-project/wildfly-monitor/wiki/InfluxDB for more details).
+In addition each server JVM is monitored wrt memory and active threads. The monitoring is done using the [wildfly-monitor](https://github.com/rhq-project/wildfly-monitor) subsystem and InfluxDB configured as a storage adapter (see https://github.com/rhq-project/wildfly-monitor/wiki/InfluxDB for more details).
 
 ### Monitor
 
-The folder [monitor](monitor) contains a Dockerfile which starts InfluxDB and a pre-poluated  [Grafana](http://grafana.org/) dashboard. 
+The folder [monitor](monitor) contains a Dockerfile which starts InfluxDB and a pre-poluated  [Grafana](http://grafana.org/) dashboard containing metrics for the monitored resources. 
 
 ### JMeter
 

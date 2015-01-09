@@ -1,6 +1,6 @@
 # Starts a WildFly domain controller named "simpsons"
-#   - using three groups (development, staging, production)
-#   - and five servers (homer, marge, bart, lisa, maggie)
+#   - using two groups (main-group, other-group)
+#   - and no servers 
 
 FROM jboss/wildfly
 
@@ -8,7 +8,6 @@ MAINTAINER Harald Pehl <harald.pehl@gmail.com>
 
 RUN /opt/wildfly/bin/add-user.sh admin passw0rd_  --silent
 RUN /opt/wildfly/bin/add-user.sh dc passw0rd_  --silent
-RUN /opt/wildfly/bin/add-user.sh test passw0rd_  --silent
 
 ADD domain.xml /opt/wildfly/domain/configuration/
 ADD host.xml /opt/wildfly/domain/configuration/
