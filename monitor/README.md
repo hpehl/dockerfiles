@@ -1,6 +1,6 @@
 # WildFly Monitor Demo
 
-This repository contains a couple of Dockerfiles and a [JMeter](http://jmeter.apache.org/) configuration to demonstrate the monitoring of JEE applications in a WildFly domain. The monitoring is done using the [wildfly-monitor](https://github.com/rhq-project/wildfly-monitor) subsystem and InfluxDB configured as a storage adapter (see https://github.com/rhq-project/wildfly-monitor/wiki/InfluxDB for more details).
+This repository contains a couple of Dockerfiles and a [JMeter](http://jmeter.apache.org/) configuration to demonstrate the monitoring of JEE applications in a WildFly domain. The monitoring is done using the [wildfly-monitor](https://github.com/rhq-project/wildfly-monitor) subsystem with InfluxDB configured as a storage adapter (see https://github.com/rhq-project/wildfly-monitor/wiki/InfluxDB for more details).
 
 ## Setup
 
@@ -25,7 +25,7 @@ In addition each server JVM is monitored wrt memory and active threads.
 
 ### Monitor
 
-The monitoring is done using InfluxDB. The docker image `hpehl/metrics-monitor` starts InfluxDB and a pre-poluated  [Grafana](http://grafana.org/) dashboard containing metrics for the monitored resources. 
+The monitoring is done using InfluxDB. The docker image `hpehl/metrics-monitor` starts an InfluxDB instance and a [Grafana](http://grafana.org/) dashboard with metrics for the monitored resources. 
 
 ### JMeter
 

@@ -1,0 +1,6 @@
+batch
+
+deploy /tmp/wildfly-helloworld-mdb.war --server-groups=main-group
+deploy /tmp/wildfly-kitchensink.war --server-groups=other-group
+
+run-batch
