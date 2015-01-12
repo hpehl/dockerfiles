@@ -33,4 +33,46 @@ TBD
 
 ## Getting Started
 
-TBD
+### Influx
+
+    docker run -d \
+        -p 8083:8083 -p 8086:8086 \
+        --name=influx \
+        hpehl/influx-grafana
+
+### WildFly Standalone
+
+    docker run -d \
+        -p 8080:8080 -p 9990:9990 \
+        -e WILDFLY_MANAGEMENT_USER=admin \
+        -e WILDFLY_MANAGEMENT_PASSWORD=admin \
+        --link influx:influx \
+        hpehl/wildfly-monitor
+
+### WildFly Domain
+
+Domain Controller:
+
+    docker run -d \
+        -p 9990:9990 \
+        -e WILDFLY_MANAGEMENT_USER=admin \
+        -e WILDFLY_MANAGEMENT_PASSWORD=admin \
+        --link influx:influx \
+        --name=domain-master \
+        hpehl/wildfly-monitor \
+        --domain-config domain-monitor.xml --host-config host-monitor-master.xml \
+        -b 0.0.0.0 -bmanagement 0.0.0.0
+
+Host Controller (main-server-group):
+
+    docker run -d \
+        -p 8080 \
+        -e WILDFLY_MANAGEMENT_USER=admin \
+        -e WILDFLY_MANAGEMENT_PASSWORD=admin \
+        -e SERVER_GROUP=main-server-group \
+        --link influx:influx \
+        --link domain-master:domain-controller \
+        hpehl/wildfly-monitor \
+        --domain-config domain-monitor.xml --host-config host-monitor-slave.xml \
+        -b 0.0.0.0 -bmanagement 0.0.0.0
+

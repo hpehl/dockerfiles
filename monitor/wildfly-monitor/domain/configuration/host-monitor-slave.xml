@@ -59,7 +59,9 @@
     </management>
 
     <domain-controller>
-        <remote host="${env.DOMAIN_CONTROLLER_PORT_9999_TCP_ADDR}" port="9999" username="@WILDFLY_MANAGEMENT_USER@" security-realm="DomainControllerRealm"/>
+        <!-- 'domain-controller' is the name of the master docker 
+        container and thus available as a named entry in '/etc/hosts' -->
+        <remote host="domain-controller" port="9999" username="@WILDFLY_MANAGEMENT_USER@" security-realm="DomainControllerRealm"/>
     </domain-controller>
 
     <interfaces>
@@ -87,24 +89,6 @@
  	</jvms>
 
     <servers>
-        <server name="server-one" group="main-server-group">
-            <!-- Remote JPDA debugging for a specific server
-            <jvm name="default">
-              <jvm-options>
-                <option value="-agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"/>
-              </jvm-options>
-           </jvm>
-           -->
-        </server>
-        <server name="server-two" group="main-server-group" auto-start="true">
-            <!-- server-two avoids port conflicts by incrementing the ports in
-                 the default socket-group declared in the server-group -->
-            <socket-bindings port-offset="150"/>
-        </server>
-        <server name="server-three" group="other-server-group" auto-start="false">
-            <!-- server-three avoids port conflicts by incrementing the ports in
-                 the default socket-group declared in the server-group -->
-            <socket-bindings port-offset="250"/>
-        </server>
+        <server name="server-one" group="@SERVER_GROUP@" auto-start="true"/>
     </servers>
 </host>
