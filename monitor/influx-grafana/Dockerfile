@@ -4,21 +4,23 @@ FROM fedora
 
 MAINTAINER Harald Pehl <harald.pehl@gmail.com>
 
-RUN yum -y install wget
-RUN yum -y install sudo
-RUN wget -q http://s3.amazonaws.com/influxdb/influxdb-latest-1.x86_64.rpm
-RUN sudo rpm -ivh influxdb-latest-1.x86_64.rpm
+# Install
+RUN yum -y install wget sudo nginx supervisor 
+RUN wget -q http://s3.amazonaws.com/influxdb/influxdb-latest-1.x86_64.rpm && rpm -ivh influxdb-latest-1.x86_64.rpm && rm influxdb-latest-1.x86_64.rpm
+RUN mkdir -p /opt/grafana && cd /opt/grafana && wget http://grafanarel.s3.amazonaws.com/grafana-1.9.0-rc1.tar.gz && tar xzvf grafana-1.9.0-rc1.tar.gz --strip 1 && rm grafana-1.9.0-rc1.tar.gz
 
-ADD influx/config.toml /config/config.toml
-ADD influx/run.sh /run.sh
-RUN chmod +x /*.sh
+# Configure
+ADD supervisord.conf /etc/supervisord.conf
+ADD nginx/nginx.conf /etc/nginx/nginx.conf
+ADD influx/run.sh /opt/influxdb/run.sh
+RUN chmod +x /opt/influxdb/run.sh
+ADD influx/config.toml /opt/influxdb/shared/config.toml
+ADD grafana/config.js /opt/grafana/config.js
 
-# Admin server
+EXPOSE 80
 EXPOSE 8083
-
-# HTTP API
 EXPOSE 8086
 
 VOLUME ["/data"]
 
-CMD ["/run.sh"]
+CMD ["/usr/bin/supervisord"]
