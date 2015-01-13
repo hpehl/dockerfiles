@@ -2,10 +2,10 @@
 
 FROM fedora
 
-MAINTAINER Harald Pehl <harald.pehl@gmail.com>
+MAINTAINER Harald Pehl <hpehl@redhat.com>
 
 # Install
-RUN yum -y install wget sudo nginx supervisor 
+RUN yum -y install tar wget sudo nginx supervisor 
 RUN wget -q http://s3.amazonaws.com/influxdb/influxdb-latest-1.x86_64.rpm && rpm -ivh influxdb-latest-1.x86_64.rpm && rm influxdb-latest-1.x86_64.rpm
 RUN mkdir -p /opt/grafana && cd /opt/grafana && wget http://grafanarel.s3.amazonaws.com/grafana-1.9.0-rc1.tar.gz && tar xzvf grafana-1.9.0-rc1.tar.gz --strip 1 && rm grafana-1.9.0-rc1.tar.gz
 
@@ -23,4 +23,4 @@ EXPOSE 8086
 
 VOLUME ["/data"]
 
-CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

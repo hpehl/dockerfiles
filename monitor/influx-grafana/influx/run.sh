@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -m
-CONFIG_FILE="/config/config.toml"
+CONFIG_FILE="/opt/influxdb/shared/config.toml"
 API_URL="http://localhost:8086"
 DB_NAMES="monitor;grafana"
 
