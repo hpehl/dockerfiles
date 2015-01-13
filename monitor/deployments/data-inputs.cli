@@ -1,0 +1,9 @@
+batch
+
+/subsystem=wildfly-monitor/server-monitor=default/data-input=message-count:add(resource="/deployment=wildfly-helloworld-mdb.war/subsystem=messaging/hornetq-server=default/jms-queue=HelloWorldMDBQueue",attribute=message-count,seconds=10)
+
+/subsystem=wildfly-monitor/server-monitor=default/data-input=messages-added:add(resource="/deployment=wildfly-helloworld-mdb.war/subsystem=messaging/hornetq-server=default/jms-queue=HelloWorldMDBQueue",attribute=messages-added,seconds=10)
+
+/subsystem=wildfly-monitor/server-monitor=default/data-input=active-count:add(resource="/deployment=wildfly-kitchensink.war/subsystem=datasources/data-source=java:jboss/datasources/KitchensinkQuickstartDS/statistics=pool",attribute=ActiveCount,seconds=10)
+
+run-batch
