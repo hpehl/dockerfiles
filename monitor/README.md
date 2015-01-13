@@ -10,6 +10,8 @@ The monitoring is done using InfluxDB and Grafana. The docker image `hpehl/influ
 
     docker run -d -p 8083:8083 -p 8086:8086 --name=influx hpehl/influx-grafana
 
+Grafana: TBD
+
 ### WildFly
 
 WildFly comes preconfigured as docker image `hpehl/wildfly-monitor`. It contains the [wildfly-monitor](https://github.com/rhq-project/wildfly-monitor) subsystem and data inputs for the heap memory and threads of the server JVMs. You can choose between standalone or domain mode. In any case you must link WildFly to the previously started InfluxDB container. 
