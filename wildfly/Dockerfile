@@ -20,6 +20,8 @@ ENV SERVER_GROUP main-server-group
 ENV WILDFLY_MANAGEMENT_USER admin
 ENV WILDFLY_MANAGEMENT_PASSWORD admin
 
+EXPOSE 8080
+EXPOSE 9990
 EXPOSE 9999
 
 # Set default command and line args for standalone mode
