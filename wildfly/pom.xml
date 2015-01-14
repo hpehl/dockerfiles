@@ -1,0 +1,92 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-parent</artifactId>
+        <version>16</version>
+    </parent>
+
+    <groupId>org.wildfly.docker</groupId>
+    <artifactId>wildfly-domain</artifactId>
+    <version>0.0.1</version>
+    <name>WildFly Docker Domain</name>
+    <description>Docker images to setup a WildFly domain</description>
+
+    <properties>
+        <docker.plugin.version>0.10.5</docker.plugin.version>
+        <wildfly.management.user>admin</wildfly.management.user>
+        <wildfly.version>8.2.0.Final</wildfly.version>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jolokia</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${docker.plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-property</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireProperty>
+                                    <property>wildfly.version</property>
+                                    <regex>(8\.1\.0\.Final|8\.2\.0\.Final)</regex>
+                                    <regexMessage>"Unsupported WildFly version. Choose one of 8.1.0.Final | 8.2.0.Final"</regexMessage>
+                                </requireProperty>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jolokia</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                    <images>
+                        <!-- Domain Controller -->
+                        <image>
+                            <name>jboss/wildfly-domain-controller:${wildfly.version}</name>
+                            <alias>domain-controller</alias>
+                            <build>
+                                <from>jboss/wildfly:${wildfly.version}</from>
+                                <exportDir>/opt/jboss/wildfly</exportDir>
+                                <assemblyDescriptor>src/main/assembly/domain-controller.xml</assemblyDescriptor>
+                                <command>/opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0</command>
+                            </build>
+                        </image>
+
+                        <!-- Host Controller -->
+<!--
+                        <image>
+                            <name>jboss/wildfly-host-controller:${wildfly.version}</name>
+                            <build>
+                                <from>jboss/wildfly:${wildfly.version}</from>
+                                <exportDir>/opt/jboss/wildfly</exportDir>
+                                <assemblyDescriptor>src/main/assembly/host-controller.xml</assemblyDescriptor>
+                                <command>/opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0</command>
+                            </build>
+                        </image>
+-->
+                    </images>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
