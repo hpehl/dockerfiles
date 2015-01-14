@@ -4,11 +4,15 @@
 
 In order to use the domain mode, you need to first start the domain controller. The domain controller defines two server groups called `main-server-group` and `other-server-group`.
 
-	docker run --rm -it -p 9990:9990 --name=domain-master hpehl/wildfly-kubernetes -b 0.0.0.0 -bmanagement 0.0.0.0
+	docker run --rm -it -p 9990:9990 --name=domain-master hpehl/wildfly-kubernetes --host-config host-master.xml -b 0.0.0.0 -bmanagement 0.0.0.0
 
 The host controller defines one server called `server-one` with `auto-start=true` and `group=main-server-group`. You can start as many host controllers as you like. Use the following snippet to start one:
 
 	docker run --rm -it -p 8080 --link domain-master:domain-controller hpehl/wildfly-kubernetes --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
+
+To start a host controller with a server using `other-server-group` execute
+
+    docker run --rm -it -p 8080 --link domain-master:domain-controller -e SERVER_GROUP=other-server-group hpehl/wildfly-kubernetes --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
 
 #### Environment Variables
 

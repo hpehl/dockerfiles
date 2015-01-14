@@ -59,9 +59,7 @@
     </management>
 
     <domain-controller>
-        <!-- 'domain-controller' is the name of the master docker 
-        container and thus available as a named entry in '/etc/hosts' -->
-        <remote host="domain-controller" port="9999" username="@WILDFLY_MANAGEMENT_USER@" security-realm="DomainControllerRealm"/>
+        <remote host="${env.DOMAIN_CONTROLLER_PORT_9990_TCP_ADDR}" port="9999" username="@WILDFLY_MANAGEMENT_USER@" security-realm="DomainControllerRealm"/>
     </domain-controller>
 
     <interfaces>
