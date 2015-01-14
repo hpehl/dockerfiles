@@ -12,8 +12,8 @@ In order to setup a domain, you need to start the domain controller. The domain 
 
 The host controller defines one server called `server-one` with `auto-start=true` and `group=main-server-group`. You can change the server group using an environment variable given at runtime:
 
-	docker run --rm -it -p 8080 --link domain-master:domain-controller hpehl/wildfly-kubernetes --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
-    docker run --rm -it -p 8080 --link domain-master:domain-controller -e SERVER_GROUP=other-server-group hpehl/wildfly-kubernetes --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
+	docker run --rm -it -p 8080 --link domain-master:domain-controller hpehl/wildfly-domain --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
+    docker run --rm -it -p 8080 --link domain-master:domain-controller -e SERVER_GROUP=other-server-group hpehl/wildfly-domain --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
 
 
 ## Environment Variables
