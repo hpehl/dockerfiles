@@ -12,29 +12,11 @@ The monitoring is done using InfluxDB and Grafana. The docker image `hpehl/influ
 
 ### WildFly
 
-WildFly comes preconfigured as docker image `hpehl/wildfly-monitor`. It contains the [wildfly-monitor](https://github.com/rhq-project/wildfly-monitor) subsystem and data inputs for the heap memory and threads of the server JVMs. You can choose between standalone or domain mode. In any case you must link WildFly to the previously started InfluxDB container. 
+WildFly is started in domain mode using the [hpehl/wildfly-domain](https://registry.hub.docker.com/u/hpehl/wildfly-domain/) docker image. Please use the following commands to setup a domain with one domain controller and two host controller:
 
-#### Standalone Mode
-
-	docker run --rm -it -p 8080:8080 -p 9990:9990 --link influx:influx hpehl/wildfly-monitor
-
-#### Domain Mode
-
-In order to use the domain mode, you need to first start the domain controller. The domain controller defines an additional profile called `monitor` which contains the [wildfly-monitor](https://github.com/rhq-project/wildfly-monitor) subsystem. Furthermore two server groups called `main-server-group` and `other-server-group` are defined using that profile.  
-
-	docker run --rm -it -p 9990:9990 --link influx:influx --name=domain-master hpehl/wildfly-monitor --domain-config domain-monitor.xml --host-config host-monitor-master.xml -b 0.0.0.0 -bmanagement 0.0.0.0
-
-The host controller defines one server called `server-one` with `auto-start=true` and `group=main-server-group`. You can start as many host controllers as you like. Use the following snippet to start one:
-
-	docker run --rm -it -p 8080 --link influx:influx --link domain-master:domain-controller hpehl/wildfly-monitor --domain-config domain-monitor.xml --host-config host-monitor-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
-
-#### Environment Variables
-
-You can use the following environment variables for further customizations. Please use the `-e FOO=bar` option when starting the containers.
-
-- `WILDFLY_MANAGEMENT_USER`: User for the management endpoint. Defaults to "admin"
-- `WILDFLY_MANAGEMENT_PASSWORD`: Password for the management endpoint. Defaults to "admin"
-- `SERVER_GROUP`: Group for the server when starting a host controller. Defaults to "main-server-group"
+    docker run -d -p 9990:9990 --name=domain-master hpehl/wildfly-domain --host-config host-master.xml -b 0.0.0.0 -bmanagement 0.0.0.0
+    docker run --rm -it -p 8080 --link domain-master:domain-controller -e SERVER_GROUP=other-server-group hpehl/wildfly-domain --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
+    docker run --rm -it -p 8080 --link domain-master:domain-controller -e SERVER_GROUP=other-server-group hpehl/wildfly-domain --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
 
 ## Deployments
 

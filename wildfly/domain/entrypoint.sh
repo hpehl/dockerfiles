@@ -20,5 +20,4 @@ sed -i "s/@SERVER_GROUP@/${SERVER_GROUP}/" ${JBOSS_HOME}/domain/configuration/ho
 unset ${WILDFLY_MANAGEMENT_USER} ${WILDFLY_MANAGEMENT_PASSWORD}
 unset ${WILDFLY_APPLICATION_USER} ${WILDFLY_APPLICATION_PASSWORD}
 
-# Run startup script for chosen operating mode
 exec ${JBOSS_HOME}/bin/domain.sh "$@"

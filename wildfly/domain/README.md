@@ -10,16 +10,14 @@ In order to setup a domain, you need to start the domain controller. The domain 
 
 ## Host Controller
 
-The host controller defines one server called `server-one` with `auto-start=true` and `group=main-server-group`. You can change the server group using an environment variable given at runtime:
+The host controller defines one server called `server-one` with `auto-start=true`. You have to define the server group using the environment variable `SERVER_GROUP`:
 
-	docker run --rm -it -p 8080 --link domain-master:domain-controller hpehl/wildfly-domain --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
-    docker run --rm -it -p 8080 --link domain-master:domain-controller -e SERVER_GROUP=other-server-group hpehl/wildfly-domain --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
-
+	docker run --rm -it -p 8080 --link domain-master:domain-controller -e SERVER_GROUP=main-server-group hpehl/wildfly-domain --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
 
 ## Environment Variables
 
 Here's a list of all environment variables which are processed by the docker image:
 
-- `WILDFLY_MANAGEMENT_USER`: User for the management endpoint. Defaults to "admin"
-- `WILDFLY_MANAGEMENT_PASSWORD`: Password for the management endpoint. Defaults to "admin"
-- `SERVER_GROUP`: Group for the server when starting a host controller. Defaults to "main-server-group"
+- `WILDFLY_MANAGEMENT_USER`: User for the management endpoint. Defaults to "admin".
+- `WILDFLY_MANAGEMENT_PASSWORD`: Password for the management endpoint. Defaults to "admin".
+- `SERVER_GROUP`: Group for the server when starting a host controller. Mandatory when starting a host controller.

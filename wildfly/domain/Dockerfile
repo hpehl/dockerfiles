@@ -15,9 +15,9 @@ RUN chmod +x /opt/jboss/wildfly/bin/entrypoint.sh
 USER jboss
 
 # Default values for the environment variables used in entrypoint.sh
-ENV SERVER_GROUP main-server-group
 ENV WILDFLY_MANAGEMENT_USER admin
 ENV WILDFLY_MANAGEMENT_PASSWORD admin
+ENV SERVER_GROUP **undefined**
 
 EXPOSE 8080 9990 9999
 
