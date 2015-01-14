@@ -1,6 +1,0 @@
-batch
-
-deploy wildfly-helloworld-mdb.war
-deploy wildfly-kitchensink.war
-
-run-batch
