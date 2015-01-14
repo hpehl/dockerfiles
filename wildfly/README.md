@@ -1,22 +1,24 @@
-# WildFly Kubernetes Demo
+# WildFly Domain
 
-## Domain Mode
+This repository contains a Dockerfile to setup a WildFly domain. It's based on the idea to have a generic docker image which is used to start both a domain controller and an arbitrary number of host controllers.
 
-In order to use the domain mode, you need to first start the domain controller. The domain controller defines two server groups called `main-server-group` and `other-server-group`.
+## Domain Controller
 
-	docker run --rm -it -p 9990:9990 --name=domain-master hpehl/wildfly-kubernetes --host-config host-master.xml -b 0.0.0.0 -bmanagement 0.0.0.0
+In order to setup a domain, you need to start the domain controller. The domain controller defines two server groups called `main-server-group` and `other-server-group`, but does not include any servers.
 
-The host controller defines one server called `server-one` with `auto-start=true` and `group=main-server-group`. You can start as many host controllers as you like. Use the following snippet to start one:
+	docker run --rm -it -p 9990:9990 --name=domain-master hpehl/wildfly-domain --host-config host-master.xml -b 0.0.0.0 -bmanagement 0.0.0.0
+
+## Host Controller
+
+The host controller defines one server called `server-one` with `auto-start=true` and `group=main-server-group`. You can change the server group using an environment variable given at runtime:
 
 	docker run --rm -it -p 8080 --link domain-master:domain-controller hpehl/wildfly-kubernetes --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
-
-To start a host controller with a server using `other-server-group` execute
-
     docker run --rm -it -p 8080 --link domain-master:domain-controller -e SERVER_GROUP=other-server-group hpehl/wildfly-kubernetes --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
 
-#### Environment Variables
 
-You can use the following environment variables for further customizations. Please use the `-e FOO=bar` option when starting the containers.
+## Environment Variables
+
+Here's a list of all environment variables which are processed by the docker image:
 
 - `WILDFLY_MANAGEMENT_USER`: User for the management endpoint. Defaults to "admin"
 - `WILDFLY_MANAGEMENT_PASSWORD`: Password for the management endpoint. Defaults to "admin"

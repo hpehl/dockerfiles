@@ -24,6 +24,10 @@ ENV SERVER_GROUP main-server-group
 ENV WILDFLY_MANAGEMENT_USER admin
 ENV WILDFLY_MANAGEMENT_PASSWORD admin
 
+EXPOSE 8080
+EXPOSE 9990
+EXPOSE 9999
+
 # Set default command and line args for standalone mode
 ENTRYPOINT ["/opt/jboss/wildfly/bin/entrypoint.sh"]
 CMD ["-c", "standalone-monitor.xml", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]

@@ -59,7 +59,7 @@
     </management>
 
     <domain-controller>
-        <remote host="${env.DOMAIN_CONTROLLER_PORT_9999_TCP_ADDR}" port="9999" username="@WILDFLY_MANAGEMENT_USER@" security-realm="DomainControllerRealm"/>
+        <remote host="${env.DOMAIN_CONTROLLER_PORT_9999_TCP_ADDR}" port="${env.DOMAIN_CONTROLLER_PORT_9999_TCP_PORT}" username="@WILDFLY_MANAGEMENT_USER@" security-realm="DomainControllerRealm"/>
     </domain-controller>
 
     <interfaces>
