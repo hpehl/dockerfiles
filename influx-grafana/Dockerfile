@@ -19,6 +19,8 @@ ADD influx/config.toml /opt/influxdb/shared/config.toml
 ADD grafana/config.js /opt/grafana/config.js
 
 ENV PRE_CREATE_DB **None**
+ENV INFLUXDB_INIT_USER root
+ENV INFLUXDB_INIT_PWD root
 
 EXPOSE 80
 EXPOSE 8083

@@ -20,6 +20,7 @@ if [ -f "/data/.pre_db_created" ]; then
 else
     echo "=> Starting InfluxDB ..."
     exec /usr/bin/influxdb -config=${CONFIG_FILE} &
+    USER=${INFLUXDB_INIT_USER:-root}
     PASS=${INFLUXDB_INIT_PWD:-root}
 
     #wait for the startup of influxdb
@@ -36,7 +37,7 @@ else
     for x in $arr
     do
         echo "=> Creating database: ${x}"
-        curl -s -k -X POST -d "{\"name\":\"${x}\"}" $(echo ${API_URL}'/db?u=root&p='${PASS})
+        curl -s -k -X POST -d "{\"name\":\"${x}\"}" $(echo ${API_URL}'/db?u='${USER}'&p='${PASS})
     done
     echo ""
 
