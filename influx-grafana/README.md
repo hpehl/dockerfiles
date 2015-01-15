@@ -14,4 +14,4 @@ Here's a list of all environment variables which are processed by the docker ima
 
 - `INFLUXDB_INIT_USER`: User for InfluxDB. Defaults to "root".
 - `INFLUXDB_INIT_PWD`: Password for the InfluxDB user. Defaults to "root".
-- `PRE_CREATE_DB`: Initial databases for InfluxDB (please note a database called `grafana` is setup in any case).
+- `PRE_CREATE_DB`: Initial databases for InfluxDB (do not include `grafana` as initial database as it's created by default).

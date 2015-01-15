@@ -3,19 +3,21 @@ define(['settings'], function(Settings) {
   return new Settings({
 
       datasources: {
-        app: {
+        {{#datasources}}
+        {{.}}: {
           type: 'influxdb',
-          url: window.location.protocol + '//' + window.location.hostname + ':8086/db/app',
-          username: 'root',
-          password: 'root',
+          url: window.location.protocol + '//' + window.location.hostname + ':8086/db/{{.}}',
+          username: '{{influxUser}}',
+          password: '{{influxPassword}}'
         },
+        {{/datasources}}
         grafana: {
           type: 'influxdb',
           url: window.location.protocol + '//' + window.location.hostname + ':8086/db/grafana',
-          username: 'root',
-          password: 'root',
+          username: '{{influxUser}}',
+          password: '{{influxPassword}}',
           grafanaDB: true
-        },
+        }
       },
 
       search: {
@@ -37,7 +39,7 @@ define(['settings'], function(Settings) {
       plugins: {
         panels: [],
 
-        dependencies: [],
+        dependencies: []
       }
 
     });
