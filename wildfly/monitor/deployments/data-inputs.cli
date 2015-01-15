@@ -1,9 +1,16 @@
 batch
 
-/subsystem=wildfly-monitor/server-monitor=default/data-input=message-count:add(resource="/deployment=wildfly-helloworld-mdb.war/subsystem=messaging/hornetq-server=default/jms-queue=HelloWorldMDBQueue",attribute=message-count,seconds=10)
+# DataSource
+/profile=full/subsystem=wildfly-monitor/server-monitor=default/data-input=active-count:add(resource="/subsystem=datasources/data-source=KitchensinkQuickstartDS/statistics=pool",attribute=ActiveCount,seconds=10)
+/profile=full/subsystem=wildfly-monitor/server-monitor=default/data-input=available-count:add(resource="/subsystem=datasources/data-source=KitchensinkQuickstartDS/statistics=pool",attribute=AvailableCount,seconds=10)
+/profile=full/subsystem=wildfly-monitor/server-monitor=default/data-input=in-use--count:add(resource="/subsystem=datasources/data-source=KitchensinkQuickstartDS/statistics=pool",attribute=InUseCount,seconds=10)
+/profile=full/subsystem=wildfly-monitor/server-monitor=default/data-input=blocking-time:add(resource="/subsystem=datasources/data-source=KitchensinkQuickstartDS/statistics=pool",attribute=TotalBlockingTime,seconds=10)
+/profile=full/subsystem=wildfly-monitor/server-monitor=default/data-input=get-time:add(resource="/subsystem=datasources/data-source=KitchensinkQuickstartDS/statistics=pool",attribute=TotalGetTime,seconds=10)
 
-/subsystem=wildfly-monitor/server-monitor=default/data-input=messages-added:add(resource="/deployment=wildfly-helloworld-mdb.war/subsystem=messaging/hornetq-server=default/jms-queue=HelloWorldMDBQueue",attribute=messages-added,seconds=10)
+# JMS
+/profile=full/subsystem=wildfly-monitor/server-monitor=default/data-input=message-count:add(resource="/subsystem=messaging/hornetq-server=default/jms-queue=HELLOWORLDMDBQueue",attribute=message-count,seconds=10)
+/profile=full/subsystem=wildfly-monitor/server-monitor=default/data-input=messages-added:add(resource="/subsystem=messaging/hornetq-server=default/jms-queue=HELLOWORLDMDBQueue",attribute=messages-added,seconds=10)
 
-/subsystem=wildfly-monitor/server-monitor=default/data-input=active-count:add(resource="/deployment=wildfly-kitchensink.war/subsystem=datasources/data-source=java:jboss/datasources/KitchensinkQuickstartDS/statistics=pool",attribute=ActiveCount,seconds=10)
+/:restart-servers(blocking=true)
 
 run-batch
