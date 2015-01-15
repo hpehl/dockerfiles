@@ -8,7 +8,7 @@ This repository contains a couple of Dockerfiles and a [JMeter](http://jmeter.ap
 
 The monitoring is done using InfluxDB and Grafana. Use the docker image `hpehl/influx-grafana` to start an InfluxDB instance and a [Grafana](http://grafana.org/) dashboard with metrics for the monitored resources.
 
-    docker run -d -p 80:80 -p 8083:8083 -p 8086:8086 --name=influx hpehl/influx-grafana
+    docker run -d -p 80:80 -p 8083:8083 -p 8086:8086 --name=influx -e PRE_CREATE_DB=monitor hpehl/influx-grafana
 
 ### WildFly
 
