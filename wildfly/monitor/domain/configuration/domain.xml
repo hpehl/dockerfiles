@@ -1014,15 +1014,15 @@
                 <storage-adapter name="influx" url="http://influx:8086" db="monitor" user="root" password="root"/>
                 <server-monitor name="default" enabled="true" num-threads="2">
                     <data-input name="heap"
-                                seconds="10"
+                                seconds="5"
                                 resource="/core-service=platform-mbean/type=memory"
                                 attribute="heap-memory-usage#used"/>
                     <data-input name="non-heap"
-                                seconds="10"
+                                seconds="5"
                                 resource="/core-service=platform-mbean/type=memory"
                                 attribute="non-heap-memory-usage#used"/>
                     <data-input name="thread-count"
-                                seconds="10"
+                                seconds="5"
                                 resource="/core-service=platform-mbean/type=threading"
                                 attribute="thread-count"/>
                 </server-monitor>

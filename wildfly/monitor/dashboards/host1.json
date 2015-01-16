@@ -1,0 +1,407 @@
+{
+  "id": null,
+  "title": "Host 1",
+  "originalTitle": "Host 1",
+  "tags": [],
+  "style": "dark",
+  "timezone": "browser",
+  "editable": true,
+  "hideControls": false,
+  "sharedCrosshair": false,
+  "rows": [
+    {
+      "title": "JVM",
+      "height": "250px",
+      "editable": true,
+      "collapse": false,
+      "panels": [
+        {
+          "id": 4,
+          "span": 6,
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "scale": 1,
+          "y_formats": [
+            "bytes",
+            "short"
+          ],
+          "grid": {
+            "max": null,
+            "min": null,
+            "leftMax": null,
+            "rightMax": null,
+            "leftMin": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold2": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2Color": "rgba(234, 112, 112, 0.22)",
+            "thresholdLine": false
+          },
+          "resolution": 100,
+          "lines": true,
+          "fill": 1,
+          "linewidth": 2,
+          "points": false,
+          "pointradius": 5,
+          "bars": false,
+          "stack": true,
+          "spyable": true,
+          "options": false,
+          "legend": {
+            "show": true,
+            "values": false,
+            "min": false,
+            "max": false,
+            "current": false,
+            "total": false,
+            "avg": false,
+            "alignAsTable": false,
+            "rightSide": false
+          },
+          "interactive": true,
+          "legend_counts": true,
+          "timezone": "browser",
+          "percentage": false,
+          "nullPointMode": "connected",
+          "steppedLine": false,
+          "tooltip": {
+            "value_type": "cumulative",
+            "query_as_alias": true,
+            "shared": false
+          },
+          "targets": [
+            {
+              "target": "randomWalk('random walk')",
+              "function": "distinct",
+              "column": "datapoint",
+              "series": "host1.server-one.heap-memory-usage",
+              "query": "select distinct(datapoint) from \"host1.server-one.heap-memory-usage\" where $timeFilter group by time($interval) order asc",
+              "interval": "",
+              "alias": "Heap",
+              "fill": ""
+            },
+            {
+              "target": "",
+              "function": "distinct",
+              "column": "datapoint",
+              "series": "host1.server-one.non-heap-memory-usage",
+              "query": "select distinct(datapoint) from \"host1.server-one.non-heap-memory-usage\" where $timeFilter group by time($interval) order asc",
+              "alias": "Non Heap",
+              "hide": false,
+              "fill": ""
+            }
+          ],
+          "aliasColors": {},
+          "aliasYAxis": {},
+          "title": "Memory",
+          "datasource": "graphite",
+          "renderer": "flot",
+          "annotate": {
+            "enable": false
+          },
+          "seriesOverrides": [
+            {
+              "alias": "Non Heap",
+              "yaxis": 1
+            },
+            {
+              "alias": "Threads",
+              "yaxis": 2
+            }
+          ],
+          "links": []
+        },
+        {
+          "id": 5,
+          "span": 6,
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "scale": 1,
+          "y_formats": [
+            "short",
+            "short"
+          ],
+          "grid": {
+            "max": null,
+            "min": null,
+            "leftMax": null,
+            "rightMax": null,
+            "leftMin": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold2": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2Color": "rgba(234, 112, 112, 0.22)",
+            "thresholdLine": false
+          },
+          "resolution": 100,
+          "lines": true,
+          "fill": 1,
+          "linewidth": 2,
+          "points": false,
+          "pointradius": 5,
+          "bars": false,
+          "stack": true,
+          "spyable": true,
+          "options": false,
+          "legend": {
+            "show": true,
+            "values": false,
+            "min": false,
+            "max": false,
+            "current": false,
+            "total": false,
+            "avg": false,
+            "alignAsTable": false,
+            "rightSide": false
+          },
+          "interactive": true,
+          "legend_counts": true,
+          "timezone": "browser",
+          "percentage": false,
+          "nullPointMode": "connected",
+          "steppedLine": false,
+          "tooltip": {
+            "value_type": "cumulative",
+            "query_as_alias": true,
+            "shared": false
+          },
+          "targets": [
+            {
+              "target": "",
+              "function": "distinct",
+              "column": "datapoint",
+              "series": "host1.server-one.thread-count",
+              "query": "select distinct(datapoint) from \"host1.server-one.thread-count\" where $timeFilter group by time($interval) order asc",
+              "alias": "Threads"
+            }
+          ],
+          "aliasColors": {
+            "Threads": "#EF843C"
+          },
+          "aliasYAxis": {},
+          "title": "Threads",
+          "datasource": "graphite",
+          "renderer": "flot",
+          "annotate": {
+            "enable": false
+          },
+          "seriesOverrides": [
+            {
+              "alias": "Non Heap",
+              "yaxis": 1
+            },
+            {
+              "alias": "Threads",
+              "yaxis": 1
+            }
+          ],
+          "links": []
+        }
+      ],
+      "showTitle": true
+    },
+    {
+      "title": "Datasource",
+      "height": "300px",
+      "editable": true,
+      "collapse": false,
+      "panels": [
+        {
+          "title": "Connections",
+          "error": false,
+          "span": 6,
+          "editable": true,
+          "type": "graph",
+          "id": 6,
+          "datasource": null,
+          "renderer": "flot",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "short",
+            "short"
+          ],
+          "grid": {
+            "leftMax": null,
+            "rightMax": null,
+            "leftMin": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold2": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2Color": "rgba(234, 112, 112, 0.22)",
+            "thresholdLine": false
+          },
+          "lines": true,
+          "fill": 0,
+          "linewidth": 2,
+          "points": false,
+          "pointradius": 5,
+          "bars": false,
+          "stack": false,
+          "percentage": false,
+          "legend": {
+            "show": true,
+            "values": false,
+            "min": false,
+            "max": false,
+            "current": false,
+            "total": false,
+            "avg": false
+          },
+          "nullPointMode": "connected",
+          "steppedLine": false,
+          "tooltip": {
+            "value_type": "cumulative",
+            "shared": false
+          },
+          "targets": [
+            {
+              "function": "distinct",
+              "column": "datapoint",
+              "series": "host1.server-one.ActiveCount",
+              "query": "select distinct(datapoint) from \"host1.server-one.ActiveCount\" where $timeFilter group by time($interval) order asc",
+              "alias": "Active",
+              "fill": ""
+            },
+            {
+              "function": "distinct",
+              "column": "datapoint",
+              "series": "host1.server-one.AvailableCount",
+              "query": "select distinct(datapoint) from \"host1.server-one.AvailableCount\" where $timeFilter group by time($interval) order asc",
+              "alias": "Available"
+            },
+            {
+              "function": "distinct",
+              "column": "datapoint",
+              "series": "host1.server-one.InUseCount",
+              "query": "select distinct(datapoint) from \"host1.server-one.InUseCount\" where $timeFilter group by time($interval) order asc",
+              "alias": "In Use"
+            }
+          ],
+          "aliasColors": {},
+          "seriesOverrides": [],
+          "links": []
+        },
+        {
+          "title": "Performance",
+          "error": false,
+          "span": 6,
+          "editable": true,
+          "type": "graph",
+          "id": 7,
+          "datasource": null,
+          "renderer": "flot",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "ms",
+            "short"
+          ],
+          "grid": {
+            "leftMax": null,
+            "rightMax": null,
+            "leftMin": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold2": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "lines": true,
+          "fill": 0,
+          "linewidth": 2,
+          "points": false,
+          "pointradius": 5,
+          "bars": false,
+          "stack": false,
+          "percentage": false,
+          "legend": {
+            "show": true,
+            "values": false,
+            "min": false,
+            "max": false,
+            "current": false,
+            "total": false,
+            "avg": false
+          },
+          "nullPointMode": "connected",
+          "steppedLine": false,
+          "tooltip": {
+            "value_type": "cumulative",
+            "shared": false
+          },
+          "targets": [
+            {
+              "function": "distinct",
+              "column": "datapoint",
+              "series": "host1.server-one.AverageCreationTime",
+              "query": "select distinct(datapoint) from \"host1.server-one.AverageCreationTime\" where $timeFilter group by time($interval) order asc",
+              "alias": "Creation Time"
+            },
+            {
+              "function": "distinct",
+              "column": "datapoint",
+              "series": "host1.server-one.AverageGetTime",
+              "query": "select distinct(datapoint) from \"host1.server-one.AverageGetTime\" where $timeFilter group by time($interval) order asc",
+              "alias": "Get Time"
+            }
+          ],
+          "aliasColors": {},
+          "seriesOverrides": [],
+          "links": []
+        }
+      ]
+    }
+  ],
+  "nav": [
+    {
+      "type": "timepicker",
+      "collapse": false,
+      "enable": true,
+      "status": "Stable",
+      "time_options": [
+        "5m",
+        "15m",
+        "1h",
+        "6h",
+        "12h",
+        "24h",
+        "2d",
+        "7d",
+        "30d"
+      ],
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "now": true,
+      "notice": false
+    }
+  ],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "refresh": "5s",
+  "version": 6,
+  "hideAllLegends": false
+}
