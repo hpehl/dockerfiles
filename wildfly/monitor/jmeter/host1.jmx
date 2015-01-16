@@ -11,7 +11,7 @@
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
     </TestPlan>
     <hashTree>
-      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="Base URL" enabled="true">
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="URL" enabled="true">
         <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="Benutzer definierte Variablen" enabled="true">
           <collectionProp name="Arguments.arguments"/>
         </elementProp>
@@ -26,11 +26,24 @@
         <stringProp name="HTTPSampler.concurrentPool">4</stringProp>
       </ConfigTestElement>
       <hashTree/>
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Header" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Content-Type</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Accept</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+      <hashTree/>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Members" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Schleifen-Controller (Loop Controller)" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">500</stringProp>
+          <stringProp name="LoopController.loops">400</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">100</stringProp>
         <stringProp name="ThreadGroup.ramp_time">5</stringProp>
@@ -46,28 +59,18 @@
         </RandomController>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add Member" enabled="true">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="Benutzer definierte Variablen" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
-                <elementProp name="name" elementType="HTTPArgument">
+                <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">${__RandomString(10, &quot;abcdefghijklmnopqrstuvwxyz&quot;)}</stringProp>
+                  <stringProp name="Argument.value">{&#xd;
+   &quot;name&quot; : &quot;${__RandomString(10, &apos;abcdefghijklmnopqrstuvwxyz&apos;)}&quot;,&#xd;
+   &quot;email&quot; : &quot;${__RandomString(5, &apos;abcdefghijklmnopqrstuvwxyz&apos;)}@${__RandomString(5, &apos;abcdefghijklmnopqrstuvwxyz&apos;)}.com&quot;,&#xd;
+   &quot;phoneNumber&quot; : &quot;${__Random(1000000000, 9999999999)}&quot;&#xd;
+}&#xd;
+</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                  <stringProp name="Argument.name">name</stringProp>
-                </elementProp>
-                <elementProp name="email" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">${__RandomString(3, &quot;abcdefghijklmnopqrstuvwxyz&quot;)}@${__RandomString(3, &quot;abcdefghijklmnopqrstuvwxyz&quot;)}.com</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                  <stringProp name="Argument.name">email</stringProp>
-                </elementProp>
-                <elementProp name="phoneNumber" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">${__Random(1000000000, 9999999999)}</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                  <stringProp name="Argument.name">phoneNumber</stringProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -88,8 +91,15 @@
           </HTTPSamplerProxy>
           <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="List Members" enabled="true">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="Benutzer definierte Variablen" enabled="true">
-              <collectionProp name="Arguments.arguments"/>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value"></stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
             </elementProp>
             <stringProp name="HTTPSampler.domain"></stringProp>
             <stringProp name="HTTPSampler.port"></stringProp>

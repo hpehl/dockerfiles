@@ -2,5 +2,5 @@
 
 docker stop host2
 docker stop host1
-docker stop domain-master
+docker stop dc
 docker stop influx
