@@ -1,7 +1,7 @@
 {
   "id": null,
-  "title": "Host 1",
-  "originalTitle": "Host 1",
+  "title": "Server",
+  "originalTitle": "Server",
   "tags": [],
   "style": "dark",
   "timezone": "browser",
@@ -76,8 +76,8 @@
               "target": "randomWalk('random walk')",
               "function": "distinct",
               "column": "datapoint",
-              "series": "host1.server-one.heap-memory-usage",
-              "query": "select distinct(datapoint) from \"host1.server-one.heap-memory-usage\" where $timeFilter group by time($interval) order asc",
+              "series": "monitor-demo.heap-memory-usage",
+              "query": "select distinct(datapoint) from \"monitor-demo.heap-memory-usage\" where $timeFilter group by time($interval) order asc",
               "interval": "",
               "alias": "Heap",
               "fill": ""
@@ -86,8 +86,8 @@
               "target": "",
               "function": "distinct",
               "column": "datapoint",
-              "series": "host1.server-one.non-heap-memory-usage",
-              "query": "select distinct(datapoint) from \"host1.server-one.non-heap-memory-usage\" where $timeFilter group by time($interval) order asc",
+              "series": "monitor-demo.non-heap-memory-usage",
+              "query": "select distinct(datapoint) from \"monitor-demo.non-heap-memory-usage\" where $timeFilter group by time($interval) order asc",
               "alias": "Non Heap",
               "hide": false,
               "fill": ""
@@ -174,8 +174,8 @@
               "target": "",
               "function": "distinct",
               "column": "datapoint",
-              "series": "host1.server-one.thread-count",
-              "query": "select distinct(datapoint) from \"host1.server-one.thread-count\" where $timeFilter group by time($interval) order asc",
+              "series": "monitor-demo.thread-count",
+              "query": "select distinct(datapoint) from \"monitor-demo.thread-count\" where $timeFilter group by time($interval) order asc",
               "alias": "Threads"
             }
           ],
@@ -211,7 +211,7 @@
       "collapse": false,
       "panels": [
         {
-          "title": "Connections",
+          "title": "Pool",
           "error": false,
           "span": 6,
           "editable": true,
@@ -256,30 +256,30 @@
           "nullPointMode": "connected",
           "steppedLine": false,
           "tooltip": {
-            "value_type": "cumulative",
+            "value_type": "individual",
             "shared": false
           },
           "targets": [
             {
               "function": "distinct",
               "column": "datapoint",
-              "series": "host1.server-one.ActiveCount",
-              "query": "select distinct(datapoint) from \"host1.server-one.ActiveCount\" where $timeFilter group by time($interval) order asc",
+              "series": "monitor-demo.ActiveCount",
+              "query": "select distinct(datapoint) from \"monitor-demo.ActiveCount\" where $timeFilter group by time($interval) order asc",
               "alias": "Active",
               "fill": ""
             },
             {
               "function": "distinct",
               "column": "datapoint",
-              "series": "host1.server-one.AvailableCount",
-              "query": "select distinct(datapoint) from \"host1.server-one.AvailableCount\" where $timeFilter group by time($interval) order asc",
+              "series": "monitor-demo.AvailableCount",
+              "query": "select distinct(datapoint) from \"monitor-demo.AvailableCount\" where $timeFilter group by time($interval) order asc",
               "alias": "Available"
             },
             {
               "function": "distinct",
               "column": "datapoint",
-              "series": "host1.server-one.InUseCount",
-              "query": "select distinct(datapoint) from \"host1.server-one.InUseCount\" where $timeFilter group by time($interval) order asc",
+              "series": "monitor-demo.InUseCount",
+              "query": "select distinct(datapoint) from \"monitor-demo.InUseCount\" where $timeFilter group by time($interval) order asc",
               "alias": "In Use"
             }
           ],
@@ -288,7 +288,7 @@
           "links": []
         },
         {
-          "title": "Performance",
+          "title": "Connections",
           "error": false,
           "span": 6,
           "editable": true,
@@ -339,16 +339,16 @@
             {
               "function": "distinct",
               "column": "datapoint",
-              "series": "host1.server-one.AverageCreationTime",
-              "query": "select distinct(datapoint) from \"host1.server-one.AverageCreationTime\" where $timeFilter group by time($interval) order asc",
-              "alias": "Creation Time"
+              "series": "monitor-demo.AverageCreationTime",
+              "query": "select distinct(datapoint) from \"monitor-demo.AverageCreationTime\" where $timeFilter group by time($interval) order asc",
+              "alias": "Ø Creation Time"
             },
             {
               "function": "distinct",
               "column": "datapoint",
-              "series": "host1.server-one.AverageGetTime",
-              "query": "select distinct(datapoint) from \"host1.server-one.AverageGetTime\" where $timeFilter group by time($interval) order asc",
-              "alias": "Get Time"
+              "series": "monitor-demo.AverageGetTime",
+              "query": "select distinct(datapoint) from \"monitor-demo.AverageGetTime\" where $timeFilter group by time($interval) order asc",
+              "alias": "Ø Get Time"
             }
           ],
           "aliasColors": {},
@@ -392,7 +392,7 @@
     }
   ],
   "time": {
-    "from": "now-1h",
+    "from": "now-5m",
     "to": "now"
   },
   "templating": {

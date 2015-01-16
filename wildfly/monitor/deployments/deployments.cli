@@ -1,7 +1,0 @@
-/profile=full/subsystem=datasources/data-source=KitchensinkQuickstartDS:add(jndi-name=java:jboss/datasources/KitchensinkQuickstartDS,connection-url=jdbc\:h2\:mem\:kitchensink-quickstart;DB_CLOSE_ON_EXIT\=FALSE;DB_CLOSE_DELAY\=-1,user-name=sa,password=sa,driver-name=h2,enabled=true,use-java-context=true)
-/profile=full/subsystem=datasources/data-source=KitchensinkQuickstartDS/connection-properties=hibernate.hbm2ddl.auto:add(value=create-drop)
-/profile=full/subsystem=datasources/data-source=KitchensinkQuickstartDS/connection-properties=hibernate.show_sql:add(value=false)
-deploy wildfly-kitchensink.war --server-groups=main-server-group
-/profile=full/subsystem=messaging/hornetq-server=default/jms-queue=HELLOWORLDMDBQueue:add(entries=[java:global/jms/HELLOWORLDMDBQueue])
-/profile=full/subsystem=messaging/hornetq-server=default/jms-topic=HELLOWORLDMDBTopic:add(entries=[java:global/jms/HELLOWORLDMDBTopic])
-deploy wildfly-helloworld-mdb.war --server-groups=other-server-group
