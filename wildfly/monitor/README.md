@@ -6,13 +6,13 @@ Quick demo of the monitoring features in WildFly based on sample JEE application
 
 ### InfluxDB & Grafana
 
-The monitoring is done using InfluxDB and Grafana. The monitor demo requires a InfluxDB called `monitor`. Start an instance using the docker image at [hpehl/influx-grafana](https://registry.hub.docker.com/u/hpehl/influx-grafana/) and these parameters:
+The monitoring is done using a combination of InfluxDB and Grafana to record and visualize the metrics. The demo requires a InfluxDB called `monitor`. Start an instance using the docker image at [hpehl/influx-grafana](https://registry.hub.docker.com/u/hpehl/influx-grafana/) and these parameters:
 
-    docker run -d -p 80:80 -p 8083:8083 -p 8086:8086 --name=influx -e PRE_CREATE_DB=monitor hpehl/influx-grafana
+    docker run -d -p 80:80 --name=influx -e PRE_CREATE_DB=monitor hpehl/influx-grafana
 
 ### WildFly
 
-WildFly is started in standalone mode based on the official `jboss/wildfly` docker image. It's bundled with the [wildfly-monitor](https://github.com/rhq-project/wildfly-monitor) subsystem, the WildFly [kitchensink](https://github.com/wildfly/quickstart/tree/master/kitchensink) quickstart sample and a pre-defined set of data-input configuration to monitor specific resources in WildFly: 
+WildFly is started in standalone mode based on the official [jboss/wildfly](https://registry.hub.docker.com/u/jboss/wildfly/) docker image. It's bundled with the [wildfly-monitor](https://github.com/rhq-project/wildfly-monitor) subsystem, the WildFly [kitchensink](https://github.com/wildfly/quickstart/tree/master/kitchensink) quickstart sample and a pre-defined set of data-input configuration to monitor specific resources in WildFly: 
 
 ```xml
 <subsystem xmlns="urn:org.rhq.metrics:wildfly-monitor:1.0">
@@ -55,13 +55,22 @@ WildFly is started in standalone mode based on the official `jboss/wildfly` dock
 </subsystem>
 ```
 
+## Grafana
+
+The demo contains two Grafana dashboards:
+
+1. A dashboard for the WildFly JVM (memory and thread usage) and two metrics showing some key indicators for the connection pool of the kitchensink datasource. 
+1. A dashboard which shows statistics of the monitoring subsystem itself. 
+
 ## Get Started
 
-1. First start the Influx and WildFly docker container. There's a shell script you can use to start and link the container. It's just a shortcut for 
+1. Start the Influx and WildFly docker containers. There's a shell script called `setup.sh` you can use to start and link the containers. It's just a shortcut for 
 
 		docker run -d -p 80:80 -p 8083:8083 -p 8086:8086 --name=influx -e PRE_CREATE_DB=monitor hpehl/influx-grafana
 		docker run -d -p 8080:8080 -p 9990:9990 --name=wildfly --hostname=monitor-demo --link influx:influx hpehl/wildfly-monitor 
 
-1. Point you browser to http://localhost/ (replace localhost with `boot2docker ip` if you running OSX) and load the Grafana dashboards from `dashboards/server.json` and `dashboards/diagnostics.json`.
+1. Point you browser to http://localhost/ (replace localhost with `boot2docker ip` if you running OS X) and import the Grafana dashboards from `dashboards/server.json` and `dashboards/diagnostics.json` (don't forget to save the dashboards after importing them).
 
 1. Use JMeter and the provided configuration `jmeter/monitor.jmx` to generate traffic and watch how the metrics in Grafana will update accordingly. 
+
+1. If you're done use the script `teardown.sh`to stop the docker containers. 
