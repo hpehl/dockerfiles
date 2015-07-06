@@ -19,6 +19,6 @@ To start the domain controller use
     
 to start a host controller use
 
-    docker run --rm -it --link dc:domain-controller wildfly-9-5x2 --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
+    docker run --rm -it --link dc:domain-controller wildfly-9-5x2 --host-config host-slave.xml
 
 Start as many host controller as you like or until you run out of memory ;-)
