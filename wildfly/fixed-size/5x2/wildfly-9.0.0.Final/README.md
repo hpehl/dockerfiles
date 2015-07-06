@@ -7,7 +7,7 @@ Contains a Dockerfile to start
 
 ## Build
 
-The image is not published in the public docker registry. To build the image use
+The image is not published to the public docker registry. To build the image use
  
     docker build -t wildfly-9-5x2 .
 
