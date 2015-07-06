@@ -15,7 +15,7 @@ The host controller defines one server called `server-one` with `auto-start=true
 - The name of the link to the domain controller must be `domain-controller`. 
 - The name of the the server group for `server-one` using the environment variable `SERVER_GROUP`:
 
-        docker run --rm -it -p 8080 --link dc:domain-controller -e SERVER_GROUP=main-server-group hpehl/wildfly-domain --host-config host-slave.xml -b 0.0.0.0 -bmanagement 0.0.0.0
+        docker run --rm -it -p 8080 --link dc:domain-controller -e SERVER_GROUP=main-server-group hpehl/wildfly-domain --host-config host-slave.xml
 
 ## Environment Variables
 
