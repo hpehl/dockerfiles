@@ -1,4 +1,4 @@
 .idea
 *.sublime-*
-*.iml
 *.log
+.DS_Store
