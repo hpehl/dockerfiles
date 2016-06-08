@@ -82,7 +82,38 @@
         </jvm>
     </jvms>
     <servers>
-        <server name="server-one" group="@SERVER_GROUP@" auto-start="true"/>
+        <server name="server-0-0" group="server-group-0" auto-start="true"/>
+        <server name="server-0-1" group="server-group-0" auto-start="true">
+            <socket-bindings port-offset="100"/>
+        </server>
+
+        <server name="server-1-0" group="server-group-1" auto-start="true">
+            <socket-bindings port-offset="200"/>
+        </server>
+        <server name="server-1-1" group="server-group-1" auto-start="true">
+            <socket-bindings port-offset="300"/>
+        </server>
+
+        <server name="server-2-0" group="server-group-2" auto-start="true">
+            <socket-bindings port-offset="400"/>
+        </server>
+        <server name="server-2-1" group="server-group-2" auto-start="true">
+            <socket-bindings port-offset="500"/>
+        </server>
+
+        <server name="server-3-0" group="server-group-3" auto-start="true">
+            <socket-bindings port-offset="600"/>
+        </server>
+        <server name="server-3-1" group="server-group-3" auto-start="true">
+            <socket-bindings port-offset="700"/>
+        </server>
+
+        <server name="server-4-0" group="server-group-4" auto-start="true">
+            <socket-bindings port-offset="800"/>
+        </server>
+        <server name="server-4-1" group="server-group-4" auto-start="true">
+            <socket-bindings port-offset="900"/>
+        </server>
     </servers>
     <profile>
         <subsystem xmlns="urn:jboss:domain:jmx:1.3">
