@@ -2,13 +2,11 @@
 
 Contains a Dockerfile to start 
  
-- a stock WildFly 10 domain controller, with five server groups `server-group-0` .. `server-group-4` using profile `default` and no servers attached to it.
+- a stock WildFly 10 domain controller with three server groups `server-group-0` .. `server-group-2` using profile `default` and no servers attached to it.
 - a host controller with two running servers in each group: 
     - `server-group-0`: `server-0-0`, `server-0-1`.
     - `server-group-1`: `server-1-0`, `server-1-1`.
     - `server-group-2`: `server-2-0`, `server-2-1`.
-    - `server-group-3`: `server-3-0`, `server-3-1`.
-    - `server-group-4`: `server-4-0`, `server-4-1`.
 
 ## Build
 
