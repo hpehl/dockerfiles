@@ -1,4 +1,4 @@
-# JBoss EAP 6.4.0.GA Domain (5x2)
+# JBoss EAP 6.4.0.GA Domain (3x2)
 
 Contains a Dockerfile to start 
  

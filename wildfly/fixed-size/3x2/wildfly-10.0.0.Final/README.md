@@ -1,4 +1,4 @@
-# WildFly 10 Domain (5x2)
+# WildFly 10 Domain (3x2)
 
 Contains a Dockerfile to start 
  
