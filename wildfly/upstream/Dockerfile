@@ -8,7 +8,7 @@ ENV JBOSS_HOME /opt/jboss/wildfly
 # Add the WildFly distribution to /opt, and make wildfly the owner of the extracted tar content
 # Make sure the distribution is available from a well-known place
 RUN cd $HOME \
-    && curl -O https://dl.dropboxusercontent.com/s/ktnxozlimhhdb3d/wildfly-11.0.0.Alpha1-SNAPSHOT.tar.gz \
+    && curl -O https://dl.dropboxusercontent.com/s/6zoa5ncnnxcfpbu/wildfly-11.0.0.Alpha1-SNAPSHOT.tar.gz \
     && tar xf wildfly-$WILDFLY_VERSION.tar.gz \
     && mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
     && rm wildfly-$WILDFLY_VERSION.tar.gz
