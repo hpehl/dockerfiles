@@ -10,7 +10,7 @@ In order to setup a domain, you need to start the domain controller first. The d
 
 ## Host Controller
 
-The host controller defines one server called `server-one` with `auto-start=true`. When starting the host controller, you have to provide specific parameters: 
+The host controller defines one server called `server-one` with `auto-start=false`. When starting the host controller, you have to provide specific parameters: 
 
 - The name of the link to the domain controller must be `domain-controller`. 
 - The name of the the server group for `server-one` using the environment variable `SERVER_GROUP`:

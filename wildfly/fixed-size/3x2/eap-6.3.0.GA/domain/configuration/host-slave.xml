@@ -87,22 +87,22 @@
  	</jvms>
 
     <servers>
-        <server name="server-0-0" group="server-group-0" auto-start="true"/>
-        <server name="server-0-1" group="server-group-0" auto-start="true">
+        <server name="server-0-0" group="server-group-0" auto-start="false"/>
+        <server name="server-0-1" group="server-group-0" auto-start="false">
             <socket-bindings port-offset="100"/>
         </server>
 
-        <server name="server-1-0" group="server-group-1" auto-start="true">
+        <server name="server-1-0" group="server-group-1" auto-start="false">
             <socket-bindings port-offset="200"/>
         </server>
-        <server name="server-1-1" group="server-group-1" auto-start="true">
+        <server name="server-1-1" group="server-group-1" auto-start="false">
             <socket-bindings port-offset="300"/>
         </server>
 
-        <server name="server-2-0" group="server-group-2" auto-start="true">
+        <server name="server-2-0" group="server-group-2" auto-start="false">
             <socket-bindings port-offset="400"/>
         </server>
-        <server name="server-2-1" group="server-group-2" auto-start="true">
+        <server name="server-2-1" group="server-group-2" auto-start="false">
             <socket-bindings port-offset="500"/>
         </server>
     </servers>
