@@ -26,4 +26,6 @@ To start a host controller use
 
     docker run --rm -it --link dc:domain-controller wildfly-11-3x2 --host-config host-slave.xml
 
+Please note that a random name is assigned to the host controller (derived from the docker container). If you want to have a stable name append the parameter `-Djboss.host.name=<name>` to the `docker start` command.
+
 Start as many host controller as you like or until you run out of memory ;-)

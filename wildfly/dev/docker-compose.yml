@@ -1,0 +1,10 @@
+version: "3"
+services:
+  wildfly-haldev-standalone:
+    image: "hpehl/wildfly-haldev-standalone"
+    ports:
+      - "9991:9991"
+  wildfly-haldev-domain:
+    image: "hpehl/wildfly-haldev-domain"
+    ports:
+      - "9992:9992"

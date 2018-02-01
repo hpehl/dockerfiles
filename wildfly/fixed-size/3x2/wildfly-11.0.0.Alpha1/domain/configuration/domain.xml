@@ -1930,18 +1930,6 @@
             </jvm>
             <socket-binding-group ref="standard-sockets"/>
         </server-group>
-        <server-group name="server-group-3" profile="default">
-            <jvm name="default">
-                <heap size="64m" max-size="512m"/>
-            </jvm>
-            <socket-binding-group ref="standard-sockets"/>
-        </server-group>
-        <server-group name="server-group-4" profile="default">
-            <jvm name="default">
-                <heap size="64m" max-size="512m"/>
-            </jvm>
-            <socket-binding-group ref="standard-sockets"/>
-        </server-group>
     </server-groups>
     <host-excludes>
         <host-exclude name="WildFly10.0">
