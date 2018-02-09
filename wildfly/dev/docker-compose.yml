@@ -3,6 +3,7 @@ services:
   wildfly-haldev-standalone:
     image: "hpehl/wildfly-haldev-standalone"
     ports:
+      - "8081:8081"
       - "9991:9991"
   wildfly-haldev-domain:
     image: "hpehl/wildfly-haldev-domain"
