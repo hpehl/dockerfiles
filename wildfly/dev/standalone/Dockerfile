@@ -10,4 +10,4 @@ RUN sed -i.bak 's/<http-interface security-realm="ManagementRealm">/<http-interf
 
 EXPOSE 8081 9991
 
-CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-Djboss.socket.binding.port-offset=1", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
+CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-Djboss.socket.binding.port-offset=1", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "-c", "standalone-full-ha.xml"]
