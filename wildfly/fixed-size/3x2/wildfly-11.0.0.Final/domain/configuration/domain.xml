@@ -54,12 +54,6 @@
     <profiles>
         <profile name="default">
             <subsystem xmlns="urn:jboss:domain:logging:3.0">
-                <console-handler name="CONSOLE">
-                    <level name="INFO"/>
-                    <formatter>
-                        <named-formatter name="COLOR-PATTERN"/>
-                    </formatter>
-                </console-handler>
                 <periodic-rotating-file-handler name="FILE" autoflush="true">
                     <formatter>
                         <named-formatter name="PATTERN"/>
@@ -80,7 +74,6 @@
                 <root-logger>
                     <level name="INFO"/>
                     <handlers>
-                        <handler name="CONSOLE"/>
                         <handler name="FILE"/>
                     </handlers>
                 </root-logger>
@@ -182,7 +175,85 @@
                 <default-missing-method-permissions-deny-access value="true"/>
                 <log-system-exceptions value="true"/>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:io:1.1">
+            <subsystem xmlns="urn:wildfly:elytron:1.2" final-providers="combined-providers" disallowed-providers="OracleUcrypto">
+                <providers>
+                    <aggregate-providers name="combined-providers">
+                        <providers name="elytron"/>
+                        <providers name="openssl"/>
+                    </aggregate-providers>
+                    <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
+                    <provider-loader name="openssl" module="org.wildfly.openssl"/>
+                </providers>
+                <audit-logging>
+                    <file-audit-log name="local-audit" path="audit.log" relative-to="jboss.server.log.dir" format="JSON"/>
+                </audit-logging>
+                <security-domains>
+                    <security-domain name="ApplicationDomain" default-realm="ApplicationRealm" permission-mapper="default-permission-mapper">
+                        <realm name="ApplicationRealm" role-decoder="groups-to-roles"/>
+                    </security-domain>
+                </security-domains>
+                <security-realms>
+                    <identity-realm name="local" identity="$local"/>
+                    <properties-realm name="ApplicationRealm">
+                        <users-properties path="application-users.properties" relative-to="jboss.domain.config.dir" digest-realm-name="ApplicationRealm"/>
+                        <groups-properties path="application-roles.properties" relative-to="jboss.domain.config.dir"/>
+                    </properties-realm>
+                </security-realms>
+                <mappers>
+                    <simple-permission-mapper name="default-permission-mapper" mapping-mode="first">
+                        <permission-mapping>
+                            <principal name="anonymous"/>
+                            <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
+                            <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
+                            <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
+                        </permission-mapping>
+                        <permission-mapping match-all="true">
+                            <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
+                            <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
+                            <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
+                            <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
+                        </permission-mapping>
+                    </simple-permission-mapper>
+                    <constant-realm-mapper name="local" realm-name="local"/>
+                    <simple-role-decoder name="groups-to-roles" attribute="groups"/>
+                    <constant-role-mapper name="super-user-mapper">
+                        <role name="SuperUser"/>
+                    </constant-role-mapper>
+                </mappers>
+                <http>
+                    <http-authentication-factory name="application-http-authentication" http-server-mechanism-factory="global" security-domain="ApplicationDomain">
+                        <mechanism-configuration>
+                            <mechanism mechanism-name="BASIC">
+                                <mechanism-realm realm-name="Application Realm"/>
+                            </mechanism>
+                            <mechanism mechanism-name="FORM"/>
+                        </mechanism-configuration>
+                    </http-authentication-factory>
+                    <provider-http-server-mechanism-factory name="global"/>
+                </http>
+                <sasl>
+                    <sasl-authentication-factory name="application-sasl-authentication" sasl-server-factory="configured" security-domain="ApplicationDomain">
+                        <mechanism-configuration>
+                            <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
+                            <mechanism mechanism-name="DIGEST-MD5">
+                                <mechanism-realm realm-name="ApplicationRealm"/>
+                            </mechanism>
+                        </mechanism-configuration>
+                    </sasl-authentication-factory>
+                    <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
+                        <properties>
+                            <property name="wildfly.sasl.local-user.default-user" value="$local"/>
+                        </properties>
+                    </configurable-sasl-server-factory>
+                    <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
+                        <filters>
+                            <filter provider-name="WildFlyElytron"/>
+                        </filters>
+                    </mechanism-provider-filtering-sasl-server-factory>
+                    <provider-sasl-server-factory name="global"/>
+                </sasl>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:io:2.0">
                 <worker name="default"/>
                 <buffer-pool name="default"/>
             </subsystem>
@@ -198,25 +269,12 @@
                         <transaction mode="BATCH"/>
                         <file-store passivation="true" purge="false"/>
                     </local-cache>
-                    <local-cache name="persistent">
-                        <locking isolation="REPEATABLE_READ"/>
-                        <transaction mode="BATCH"/>
-                        <file-store passivation="false" purge="false"/>
-                    </local-cache>
-                    <local-cache name="concurrent">
-                        <file-store passivation="true" purge="false"/>
-                    </local-cache>
                 </cache-container>
                 <cache-container name="ejb" aliases="sfsb" default-cache="passivation" module="org.wildfly.clustering.ejb.infinispan">
                     <local-cache name="passivation">
                         <locking isolation="REPEATABLE_READ"/>
                         <transaction mode="BATCH"/>
                         <file-store passivation="true" purge="false"/>
-                    </local-cache>
-                    <local-cache name="persistent">
-                        <locking isolation="REPEATABLE_READ"/>
-                        <transaction mode="BATCH"/>
-                        <file-store passivation="false" purge="false"/>
                     </local-cache>
                 </cache-container>
                 <cache-container name="hibernate" module="org.hibernate.infinispan">
@@ -262,7 +320,7 @@
                 <jpa default-datasource="" default-extended-persistence-inheritance="DEEP"/>
             </subsystem>
             <subsystem xmlns="urn:jboss:domain:jsf:1.0"/>
-            <subsystem xmlns="urn:jboss:domain:mail:2.1">
+            <subsystem xmlns="urn:jboss:domain:mail:3.0">
                 <mail-session name="default" jndi-name="java:jboss/mail/Default">
                     <smtp-server outbound-socket-binding-ref="mail-smtp"/>
                 </mail-session>
@@ -278,85 +336,7 @@
             <subsystem xmlns="urn:jboss:domain:resource-adapters:5.0"/>
             <subsystem xmlns="urn:jboss:domain:request-controller:1.0"/>
             <subsystem xmlns="urn:jboss:domain:sar:1.0"/>
-            <subsystem xmlns="urn:wildfly:elytron:1.0" final-providers="combined-providers">
-                <providers>
-                    <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
-                    <provider-loader name="openssl" module="org.wildfly.openssl"/>
-                    <aggregate-providers name="combined-providers">
-                        <providers name="elytron"/>
-                        <providers name="openssl"/>
-                    </aggregate-providers>
-                </providers>
-                <audit-logging>
-                    <file-audit-log name="local-audit" path="audit.log" relative-to="jboss.server.log.dir" format="JSON"/>
-                </audit-logging>
-                <security-domains>
-                    <security-domain name="ApplicationDomain" default-realm="ApplicationRealm" permission-mapper="default-permission-mapper" security-event-listener="local-audit">
-                        <realm name="ApplicationRealm" role-decoder="groups-to-roles"/>
-                    </security-domain>
-                </security-domains>
-                <security-realms>
-                    <identity-realm name="local" identity="$local"/>
-                    <properties-realm name="ApplicationRealm">
-                        <users-properties path="application-users.properties" relative-to="jboss.domain.config.dir" digest-realm-name="ApplicationRealm"/>
-                        <groups-properties path="application-roles.properties" relative-to="jboss.domain.config.dir"/>
-                    </properties-realm>
-                </security-realms>
-                <mappers>
-                    <constant-permission-mapper name="default-permission-mapper">
-                        <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
-                        <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
-                        <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
-                        <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
-                    </constant-permission-mapper>
-                    <constant-realm-mapper name="local" realm-name="local"/>
-                    <simple-role-decoder name="groups-to-roles" attribute="groups"/>
-                    <constant-role-mapper name="super-user-mapper">
-                        <role name="SuperUser"/>
-                    </constant-role-mapper>
-                </mappers>
-                <http>
-                    <http-authentication-factory name="application-http-authentication" http-server-mechanism-factory="global" security-domain="ApplicationDomain">
-                        <mechanism-configuration>
-                            <mechanism mechanism-name="BASIC">
-                                <mechanism-realm realm-name="Application Realm"/>
-                            </mechanism>
-                            <mechanism mechanism-name="FORM"/>
-                        </mechanism-configuration>
-                    </http-authentication-factory>
-                    <provider-http-server-mechanism-factory name="global"/>
-                </http>
-                <sasl>
-                    <sasl-authentication-factory name="application-sasl-authentication" sasl-server-factory="configured" security-domain="ApplicationDomain">
-                        <mechanism-configuration>
-                            <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
-                            <mechanism mechanism-name="DIGEST-MD5">
-                                <mechanism-realm realm-name="ApplicationRealm"/>
-                            </mechanism>
-                        </mechanism-configuration>
-                    </sasl-authentication-factory>
-                    <provider-sasl-server-factory name="global"/>
-                    <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
-                        <filters>
-                            <filter provider-name="WildFlyElytron"/>
-                        </filters>
-                    </mechanism-provider-filtering-sasl-server-factory>
-                    <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
-                        <filters>
-                            <filter>
-                                <pattern-filter value="JBOSS-LOCAL-USER"/>
-                            </filter>
-                            <filter>
-                                <pattern-filter value="DIGEST-MD5"/>
-                            </filter>
-                        </filters>
-                        <properties>
-                            <property name="wildfly.sasl.local-user.default-user" value="$local"/>
-                        </properties>
-                    </configurable-sasl-server-factory>
-                </sasl>
-            </subsystem>
-            <subsystem xmlns="urn:jboss:domain:security:3.0">
+            <subsystem xmlns="urn:jboss:domain:security:2.0">
                 <security-domains>
                     <security-domain name="other" cache-type="default">
                         <authentication>
@@ -388,14 +368,14 @@
                     </security-domain>
                 </security-domains>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:security-manager:3.0">
+            <subsystem xmlns="urn:jboss:domain:security-manager:1.0">
                 <deployment-permissions>
                     <maximum-set>
                         <permission class="java.security.AllPermission"/>
                     </maximum-set>
                 </deployment-permissions>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:transactions:3.1">
+            <subsystem xmlns="urn:jboss:domain:transactions:4.0">
                 <core-environment>
                     <process-id>
                         <uuid/>
@@ -413,7 +393,7 @@
                         <location name="/" handler="welcome-content"/>
                         <filter-ref name="server-header"/>
                         <filter-ref name="x-powered-by-header"/>
-                        <http-invoker http-authentication-factory="application-http-authentication"/>
+                        <http-invoker security-realm="ApplicationRealm"/>
                     </host>
                 </server>
                 <servlet-container name="default">
@@ -424,7 +404,7 @@
                     <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
                 </handlers>
                 <filters>
-                    <response-header name="server-header" header-name="Server" header-value="WildFly/10"/>
+                    <response-header name="server-header" header-name="Server" header-value="WildFly/11"/>
                     <response-header name="x-powered-by-header" header-name="X-Powered-By" header-value="Undertow/1"/>
                 </filters>
             </subsystem>
@@ -442,12 +422,6 @@
         </profile>
         <profile name="ha">
             <subsystem xmlns="urn:jboss:domain:logging:3.0">
-                <console-handler name="CONSOLE">
-                    <level name="INFO"/>
-                    <formatter>
-                        <named-formatter name="COLOR-PATTERN"/>
-                    </formatter>
-                </console-handler>
                 <periodic-rotating-file-handler name="FILE" autoflush="true">
                     <formatter>
                         <named-formatter name="PATTERN"/>
@@ -468,7 +442,6 @@
                 <root-logger>
                     <level name="INFO"/>
                     <handlers>
-                        <handler name="CONSOLE"/>
                         <handler name="FILE"/>
                     </handlers>
                 </root-logger>
@@ -570,7 +543,85 @@
                 <default-missing-method-permissions-deny-access value="true"/>
                 <log-system-exceptions value="true"/>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:io:1.1">
+            <subsystem xmlns="urn:wildfly:elytron:1.2" final-providers="combined-providers" disallowed-providers="OracleUcrypto">
+                <providers>
+                    <aggregate-providers name="combined-providers">
+                        <providers name="elytron"/>
+                        <providers name="openssl"/>
+                    </aggregate-providers>
+                    <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
+                    <provider-loader name="openssl" module="org.wildfly.openssl"/>
+                </providers>
+                <audit-logging>
+                    <file-audit-log name="local-audit" path="audit.log" relative-to="jboss.server.log.dir" format="JSON"/>
+                </audit-logging>
+                <security-domains>
+                    <security-domain name="ApplicationDomain" default-realm="ApplicationRealm" permission-mapper="default-permission-mapper">
+                        <realm name="ApplicationRealm" role-decoder="groups-to-roles"/>
+                    </security-domain>
+                </security-domains>
+                <security-realms>
+                    <identity-realm name="local" identity="$local"/>
+                    <properties-realm name="ApplicationRealm">
+                        <users-properties path="application-users.properties" relative-to="jboss.domain.config.dir" digest-realm-name="ApplicationRealm"/>
+                        <groups-properties path="application-roles.properties" relative-to="jboss.domain.config.dir"/>
+                    </properties-realm>
+                </security-realms>
+                <mappers>
+                    <simple-permission-mapper name="default-permission-mapper" mapping-mode="first">
+                        <permission-mapping>
+                            <principal name="anonymous"/>
+                            <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
+                            <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
+                            <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
+                        </permission-mapping>
+                        <permission-mapping match-all="true">
+                            <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
+                            <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
+                            <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
+                            <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
+                        </permission-mapping>
+                    </simple-permission-mapper>
+                    <constant-realm-mapper name="local" realm-name="local"/>
+                    <simple-role-decoder name="groups-to-roles" attribute="groups"/>
+                    <constant-role-mapper name="super-user-mapper">
+                        <role name="SuperUser"/>
+                    </constant-role-mapper>
+                </mappers>
+                <http>
+                    <http-authentication-factory name="application-http-authentication" http-server-mechanism-factory="global" security-domain="ApplicationDomain">
+                        <mechanism-configuration>
+                            <mechanism mechanism-name="BASIC">
+                                <mechanism-realm realm-name="Application Realm"/>
+                            </mechanism>
+                            <mechanism mechanism-name="FORM"/>
+                        </mechanism-configuration>
+                    </http-authentication-factory>
+                    <provider-http-server-mechanism-factory name="global"/>
+                </http>
+                <sasl>
+                    <sasl-authentication-factory name="application-sasl-authentication" sasl-server-factory="configured" security-domain="ApplicationDomain">
+                        <mechanism-configuration>
+                            <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
+                            <mechanism mechanism-name="DIGEST-MD5">
+                                <mechanism-realm realm-name="ApplicationRealm"/>
+                            </mechanism>
+                        </mechanism-configuration>
+                    </sasl-authentication-factory>
+                    <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
+                        <properties>
+                            <property name="wildfly.sasl.local-user.default-user" value="$local"/>
+                        </properties>
+                    </configurable-sasl-server-factory>
+                    <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
+                        <filters>
+                            <filter provider-name="WildFlyElytron"/>
+                        </filters>
+                    </mechanism-provider-filtering-sasl-server-factory>
+                    <provider-sasl-server-factory name="global"/>
+                </sasl>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:io:2.0">
                 <worker name="default"/>
                 <buffer-pool name="default"/>
             </subsystem>
@@ -586,9 +637,6 @@
                     <distributed-cache name="dist">
                         <locking isolation="REPEATABLE_READ"/>
                         <transaction mode="BATCH"/>
-                        <file-store/>
-                    </distributed-cache>
-                    <distributed-cache name="concurrent">
                         <file-store/>
                     </distributed-cache>
                 </cache-container>
@@ -635,9 +683,9 @@
                 <cached-connection-manager/>
             </subsystem>
             <subsystem xmlns="urn:jboss:domain:jdr:1.0"/>
-            <subsystem xmlns="urn:jboss:domain:jgroups:4.1">
+            <subsystem xmlns="urn:jboss:domain:jgroups:5.0">
                 <channels default="ee">
-                    <channel name="ee" stack="udp"/>
+                    <channel name="ee" stack="udp" cluster="ejb"/>
                 </channels>
                 <stacks>
                     <stack name="udp">
@@ -680,7 +728,7 @@
                 <jpa default-datasource="" default-extended-persistence-inheritance="DEEP"/>
             </subsystem>
             <subsystem xmlns="urn:jboss:domain:jsf:1.0"/>
-            <subsystem xmlns="urn:jboss:domain:mail:2.1">
+            <subsystem xmlns="urn:jboss:domain:mail:3.0">
                 <mail-session name="default" jndi-name="java:jboss/mail/Default">
                     <smtp-server outbound-socket-binding-ref="mail-smtp"/>
                 </mail-session>
@@ -703,85 +751,7 @@
             <subsystem xmlns="urn:jboss:domain:resource-adapters:5.0"/>
             <subsystem xmlns="urn:jboss:domain:request-controller:1.0"/>
             <subsystem xmlns="urn:jboss:domain:sar:1.0"/>
-            <subsystem xmlns="urn:wildfly:elytron:1.0" final-providers="combined-providers">
-                <providers>
-                    <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
-                    <provider-loader name="openssl" module="org.wildfly.openssl"/>
-                    <aggregate-providers name="combined-providers">
-                        <providers name="elytron"/>
-                        <providers name="openssl"/>
-                    </aggregate-providers>
-                </providers>
-                <audit-logging>
-                    <file-audit-log name="local-audit" path="audit.log" relative-to="jboss.server.log.dir" format="JSON"/>
-                </audit-logging>
-                <security-domains>
-                    <security-domain name="ApplicationDomain" default-realm="ApplicationRealm" permission-mapper="default-permission-mapper" security-event-listener="local-audit">
-                        <realm name="ApplicationRealm" role-decoder="groups-to-roles"/>
-                    </security-domain>
-                </security-domains>
-                <security-realms>
-                    <identity-realm name="local" identity="$local"/>
-                    <properties-realm name="ApplicationRealm">
-                        <users-properties path="application-users.properties" relative-to="jboss.domain.config.dir" digest-realm-name="ApplicationRealm"/>
-                        <groups-properties path="application-roles.properties" relative-to="jboss.domain.config.dir"/>
-                    </properties-realm>
-                </security-realms>
-                <mappers>
-                    <constant-permission-mapper name="default-permission-mapper">
-                        <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
-                        <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
-                        <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
-                        <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
-                    </constant-permission-mapper>
-                    <constant-realm-mapper name="local" realm-name="local"/>
-                    <simple-role-decoder name="groups-to-roles" attribute="groups"/>
-                    <constant-role-mapper name="super-user-mapper">
-                        <role name="SuperUser"/>
-                    </constant-role-mapper>
-                </mappers>
-                <http>
-                    <http-authentication-factory name="application-http-authentication" http-server-mechanism-factory="global" security-domain="ApplicationDomain">
-                        <mechanism-configuration>
-                            <mechanism mechanism-name="BASIC">
-                                <mechanism-realm realm-name="Application Realm"/>
-                            </mechanism>
-                            <mechanism mechanism-name="FORM"/>
-                        </mechanism-configuration>
-                    </http-authentication-factory>
-                    <provider-http-server-mechanism-factory name="global"/>
-                </http>
-                <sasl>
-                    <sasl-authentication-factory name="application-sasl-authentication" sasl-server-factory="configured" security-domain="ApplicationDomain">
-                        <mechanism-configuration>
-                            <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
-                            <mechanism mechanism-name="DIGEST-MD5">
-                                <mechanism-realm realm-name="ApplicationRealm"/>
-                            </mechanism>
-                        </mechanism-configuration>
-                    </sasl-authentication-factory>
-                    <provider-sasl-server-factory name="global"/>
-                    <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
-                        <filters>
-                            <filter provider-name="WildFlyElytron"/>
-                        </filters>
-                    </mechanism-provider-filtering-sasl-server-factory>
-                    <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
-                        <filters>
-                            <filter>
-                                <pattern-filter value="JBOSS-LOCAL-USER"/>
-                            </filter>
-                            <filter>
-                                <pattern-filter value="DIGEST-MD5"/>
-                            </filter>
-                        </filters>
-                        <properties>
-                            <property name="wildfly.sasl.local-user.default-user" value="$local"/>
-                        </properties>
-                    </configurable-sasl-server-factory>
-                </sasl>
-            </subsystem>
-            <subsystem xmlns="urn:jboss:domain:security:3.0">
+            <subsystem xmlns="urn:jboss:domain:security:2.0">
                 <security-domains>
                     <security-domain name="other" cache-type="default">
                         <authentication>
@@ -813,7 +783,7 @@
                     </security-domain>
                 </security-domains>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:security-manager:3.0">
+            <subsystem xmlns="urn:jboss:domain:security-manager:1.0">
                 <deployment-permissions>
                     <maximum-set>
                         <permission class="java.security.AllPermission"/>
@@ -827,7 +797,7 @@
                     </singleton-policy>
                 </singleton-policies>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:transactions:3.1">
+            <subsystem xmlns="urn:jboss:domain:transactions:4.0">
                 <core-environment>
                     <process-id>
                         <uuid/>
@@ -846,7 +816,7 @@
                         <location name="/" handler="welcome-content"/>
                         <filter-ref name="server-header"/>
                         <filter-ref name="x-powered-by-header"/>
-                        <http-invoker http-authentication-factory="application-http-authentication"/>
+                        <http-invoker security-realm="ApplicationRealm"/>
                     </host>
                 </server>
                 <servlet-container name="default">
@@ -857,7 +827,7 @@
                     <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
                 </handlers>
                 <filters>
-                    <response-header name="server-header" header-name="Server" header-value="WildFly/10"/>
+                    <response-header name="server-header" header-name="Server" header-value="WildFly/11"/>
                     <response-header name="x-powered-by-header" header-name="X-Powered-By" header-value="Undertow/1"/>
                 </filters>
             </subsystem>
@@ -875,12 +845,6 @@
         </profile>
         <profile name="full">
             <subsystem xmlns="urn:jboss:domain:logging:3.0">
-                <console-handler name="CONSOLE">
-                    <level name="INFO"/>
-                    <formatter>
-                        <named-formatter name="COLOR-PATTERN"/>
-                    </formatter>
-                </console-handler>
                 <periodic-rotating-file-handler name="FILE" autoflush="true">
                     <formatter>
                         <named-formatter name="PATTERN"/>
@@ -901,7 +865,6 @@
                 <root-logger>
                     <level name="INFO"/>
                     <handlers>
-                        <handler name="CONSOLE"/>
                         <handler name="FILE"/>
                     </handlers>
                 </root-logger>
@@ -1008,7 +971,85 @@
                 <default-missing-method-permissions-deny-access value="true"/>
                 <log-system-exceptions value="true"/>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:io:1.1">
+            <subsystem xmlns="urn:wildfly:elytron:1.2" final-providers="combined-providers" disallowed-providers="OracleUcrypto">
+                <providers>
+                    <aggregate-providers name="combined-providers">
+                        <providers name="elytron"/>
+                        <providers name="openssl"/>
+                    </aggregate-providers>
+                    <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
+                    <provider-loader name="openssl" module="org.wildfly.openssl"/>
+                </providers>
+                <audit-logging>
+                    <file-audit-log name="local-audit" path="audit.log" relative-to="jboss.server.log.dir" format="JSON"/>
+                </audit-logging>
+                <security-domains>
+                    <security-domain name="ApplicationDomain" default-realm="ApplicationRealm" permission-mapper="default-permission-mapper">
+                        <realm name="ApplicationRealm" role-decoder="groups-to-roles"/>
+                    </security-domain>
+                </security-domains>
+                <security-realms>
+                    <identity-realm name="local" identity="$local"/>
+                    <properties-realm name="ApplicationRealm">
+                        <users-properties path="application-users.properties" relative-to="jboss.domain.config.dir" digest-realm-name="ApplicationRealm"/>
+                        <groups-properties path="application-roles.properties" relative-to="jboss.domain.config.dir"/>
+                    </properties-realm>
+                </security-realms>
+                <mappers>
+                    <simple-permission-mapper name="default-permission-mapper" mapping-mode="first">
+                        <permission-mapping>
+                            <principal name="anonymous"/>
+                            <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
+                            <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
+                            <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
+                        </permission-mapping>
+                        <permission-mapping match-all="true">
+                            <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
+                            <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
+                            <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
+                            <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
+                        </permission-mapping>
+                    </simple-permission-mapper>
+                    <constant-realm-mapper name="local" realm-name="local"/>
+                    <simple-role-decoder name="groups-to-roles" attribute="groups"/>
+                    <constant-role-mapper name="super-user-mapper">
+                        <role name="SuperUser"/>
+                    </constant-role-mapper>
+                </mappers>
+                <http>
+                    <http-authentication-factory name="application-http-authentication" http-server-mechanism-factory="global" security-domain="ApplicationDomain">
+                        <mechanism-configuration>
+                            <mechanism mechanism-name="BASIC">
+                                <mechanism-realm realm-name="Application Realm"/>
+                            </mechanism>
+                            <mechanism mechanism-name="FORM"/>
+                        </mechanism-configuration>
+                    </http-authentication-factory>
+                    <provider-http-server-mechanism-factory name="global"/>
+                </http>
+                <sasl>
+                    <sasl-authentication-factory name="application-sasl-authentication" sasl-server-factory="configured" security-domain="ApplicationDomain">
+                        <mechanism-configuration>
+                            <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
+                            <mechanism mechanism-name="DIGEST-MD5">
+                                <mechanism-realm realm-name="ApplicationRealm"/>
+                            </mechanism>
+                        </mechanism-configuration>
+                    </sasl-authentication-factory>
+                    <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
+                        <properties>
+                            <property name="wildfly.sasl.local-user.default-user" value="$local"/>
+                        </properties>
+                    </configurable-sasl-server-factory>
+                    <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
+                        <filters>
+                            <filter provider-name="WildFlyElytron"/>
+                        </filters>
+                    </mechanism-provider-filtering-sasl-server-factory>
+                    <provider-sasl-server-factory name="global"/>
+                </sasl>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:io:2.0">
                 <worker name="default"/>
                 <buffer-pool name="default"/>
             </subsystem>
@@ -1024,25 +1065,12 @@
                         <transaction mode="BATCH"/>
                         <file-store passivation="true" purge="false"/>
                     </local-cache>
-                    <local-cache name="persistent">
-                        <locking isolation="REPEATABLE_READ"/>
-                        <transaction mode="BATCH"/>
-                        <file-store passivation="false" purge="false"/>
-                    </local-cache>
-                    <local-cache name="concurrent">
-                        <file-store passivation="true" purge="false"/>
-                    </local-cache>
                 </cache-container>
                 <cache-container name="ejb" aliases="sfsb" default-cache="passivation" module="org.wildfly.clustering.ejb.infinispan">
                     <local-cache name="passivation">
                         <locking isolation="REPEATABLE_READ"/>
                         <transaction mode="BATCH"/>
                         <file-store passivation="true" purge="false"/>
-                    </local-cache>
-                    <local-cache name="persistent">
-                        <locking isolation="REPEATABLE_READ"/>
-                        <transaction mode="BATCH"/>
-                        <file-store passivation="false" purge="false"/>
                     </local-cache>
                 </cache-container>
                 <cache-container name="hibernate" module="org.hibernate.infinispan">
@@ -1058,7 +1086,7 @@
                     <local-cache name="timestamps"/>
                 </cache-container>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:iiop-openjdk:3.0">
+            <subsystem xmlns="urn:jboss:domain:iiop-openjdk:2.0">
                 <orb socket-binding="iiop"/>
                 <initializers security="identity" transactions="spec"/>
                 <security server-requires-ssl="false" client-requires-ssl="false"/>
@@ -1094,12 +1122,12 @@
             </subsystem>
             <subsystem xmlns="urn:jboss:domain:jsf:1.0"/>
             <subsystem xmlns="urn:jboss:domain:jsr77:1.0"/>
-            <subsystem xmlns="urn:jboss:domain:mail:2.1">
+            <subsystem xmlns="urn:jboss:domain:mail:3.0">
                 <mail-session name="default" jndi-name="java:jboss/mail/Default">
                     <smtp-server outbound-socket-binding-ref="mail-smtp"/>
                 </mail-session>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:messaging-activemq:1.1">
+            <subsystem xmlns="urn:jboss:domain:messaging-activemq:2.0">
                 <server name="default">
                     <security-setting name="#">
                         <role name="guest" send="true" consume="true" create-non-durable-queue="true" delete-non-durable-queue="true"/>
@@ -1109,13 +1137,17 @@
                     <http-connector name="http-connector-throughput" socket-binding="http" endpoint="http-acceptor-throughput">
                         <param name="batch-delay" value="50"/>
                     </http-connector>
-                    <in-vm-connector name="in-vm" server-id="0"/>
+                    <in-vm-connector name="in-vm" server-id="0">
+                        <param name="buffer-pooling" value="false"/>
+                    </in-vm-connector>
                     <http-acceptor name="http-acceptor" http-listener="default"/>
                     <http-acceptor name="http-acceptor-throughput" http-listener="default">
                         <param name="batch-delay" value="50"/>
                         <param name="direct-deliver" value="false"/>
                     </http-acceptor>
-                    <in-vm-acceptor name="in-vm" server-id="0"/>
+                    <in-vm-acceptor name="in-vm" server-id="0">
+                        <param name="buffer-pooling" value="false"/>
+                    </in-vm-acceptor>
                     <jms-queue name="ExpiryQueue" entries="java:/jms/queue/ExpiryQueue"/>
                     <jms-queue name="DLQ" entries="java:/jms/queue/DLQ"/>
                     <connection-factory name="InVmConnectionFactory" entries="java:/ConnectionFactory" connectors="in-vm"/>
@@ -1134,85 +1166,7 @@
             <subsystem xmlns="urn:jboss:domain:resource-adapters:5.0"/>
             <subsystem xmlns="urn:jboss:domain:request-controller:1.0"/>
             <subsystem xmlns="urn:jboss:domain:sar:1.0"/>
-            <subsystem xmlns="urn:wildfly:elytron:1.0" final-providers="combined-providers">
-                <providers>
-                    <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
-                    <provider-loader name="openssl" module="org.wildfly.openssl"/>
-                    <aggregate-providers name="combined-providers">
-                        <providers name="elytron"/>
-                        <providers name="openssl"/>
-                    </aggregate-providers>
-                </providers>
-                <audit-logging>
-                    <file-audit-log name="local-audit" path="audit.log" relative-to="jboss.server.log.dir" format="JSON"/>
-                </audit-logging>
-                <security-domains>
-                    <security-domain name="ApplicationDomain" default-realm="ApplicationRealm" permission-mapper="default-permission-mapper" security-event-listener="local-audit">
-                        <realm name="ApplicationRealm" role-decoder="groups-to-roles"/>
-                    </security-domain>
-                </security-domains>
-                <security-realms>
-                    <identity-realm name="local" identity="$local"/>
-                    <properties-realm name="ApplicationRealm">
-                        <users-properties path="application-users.properties" relative-to="jboss.domain.config.dir" digest-realm-name="ApplicationRealm"/>
-                        <groups-properties path="application-roles.properties" relative-to="jboss.domain.config.dir"/>
-                    </properties-realm>
-                </security-realms>
-                <mappers>
-                    <constant-permission-mapper name="default-permission-mapper">
-                        <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
-                        <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
-                        <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
-                        <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
-                    </constant-permission-mapper>
-                    <constant-realm-mapper name="local" realm-name="local"/>
-                    <simple-role-decoder name="groups-to-roles" attribute="groups"/>
-                    <constant-role-mapper name="super-user-mapper">
-                        <role name="SuperUser"/>
-                    </constant-role-mapper>
-                </mappers>
-                <http>
-                    <http-authentication-factory name="application-http-authentication" http-server-mechanism-factory="global" security-domain="ApplicationDomain">
-                        <mechanism-configuration>
-                            <mechanism mechanism-name="BASIC">
-                                <mechanism-realm realm-name="Application Realm"/>
-                            </mechanism>
-                            <mechanism mechanism-name="FORM"/>
-                        </mechanism-configuration>
-                    </http-authentication-factory>
-                    <provider-http-server-mechanism-factory name="global"/>
-                </http>
-                <sasl>
-                    <sasl-authentication-factory name="application-sasl-authentication" sasl-server-factory="configured" security-domain="ApplicationDomain">
-                        <mechanism-configuration>
-                            <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
-                            <mechanism mechanism-name="DIGEST-MD5">
-                                <mechanism-realm realm-name="ApplicationRealm"/>
-                            </mechanism>
-                        </mechanism-configuration>
-                    </sasl-authentication-factory>
-                    <provider-sasl-server-factory name="global"/>
-                    <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
-                        <filters>
-                            <filter provider-name="WildFlyElytron"/>
-                        </filters>
-                    </mechanism-provider-filtering-sasl-server-factory>
-                    <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
-                        <filters>
-                            <filter>
-                                <pattern-filter value="JBOSS-LOCAL-USER"/>
-                            </filter>
-                            <filter>
-                                <pattern-filter value="DIGEST-MD5"/>
-                            </filter>
-                        </filters>
-                        <properties>
-                            <property name="wildfly.sasl.local-user.default-user" value="$local"/>
-                        </properties>
-                    </configurable-sasl-server-factory>
-                </sasl>
-            </subsystem>
-            <subsystem xmlns="urn:jboss:domain:security:3.0">
+            <subsystem xmlns="urn:jboss:domain:security:2.0">
                 <security-domains>
                     <security-domain name="other" cache-type="default">
                         <authentication>
@@ -1244,14 +1198,14 @@
                     </security-domain>
                 </security-domains>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:security-manager:3.0">
+            <subsystem xmlns="urn:jboss:domain:security-manager:1.0">
                 <deployment-permissions>
                     <maximum-set>
                         <permission class="java.security.AllPermission"/>
                     </maximum-set>
                 </deployment-permissions>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:transactions:3.1">
+            <subsystem xmlns="urn:jboss:domain:transactions:4.0">
                 <core-environment>
                     <process-id>
                         <uuid/>
@@ -1269,7 +1223,7 @@
                         <location name="/" handler="welcome-content"/>
                         <filter-ref name="server-header"/>
                         <filter-ref name="x-powered-by-header"/>
-                        <http-invoker http-authentication-factory="application-http-authentication"/>
+                        <http-invoker security-realm="ApplicationRealm"/>
                     </host>
                 </server>
                 <servlet-container name="default">
@@ -1280,7 +1234,7 @@
                     <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
                 </handlers>
                 <filters>
-                    <response-header name="server-header" header-name="Server" header-value="WildFly/10"/>
+                    <response-header name="server-header" header-name="Server" header-value="WildFly/11"/>
                     <response-header name="x-powered-by-header" header-name="X-Powered-By" header-value="Undertow/1"/>
                 </filters>
             </subsystem>
@@ -1298,12 +1252,6 @@
         </profile>
         <profile name="full-ha">
             <subsystem xmlns="urn:jboss:domain:logging:3.0">
-                <console-handler name="CONSOLE">
-                    <level name="INFO"/>
-                    <formatter>
-                        <named-formatter name="COLOR-PATTERN"/>
-                    </formatter>
-                </console-handler>
                 <periodic-rotating-file-handler name="FILE" autoflush="true">
                     <formatter>
                         <named-formatter name="PATTERN"/>
@@ -1324,7 +1272,6 @@
                 <root-logger>
                     <level name="INFO"/>
                     <handlers>
-                        <handler name="CONSOLE"/>
                         <handler name="FILE"/>
                     </handlers>
                 </root-logger>
@@ -1431,7 +1378,85 @@
                 <default-missing-method-permissions-deny-access value="true"/>
                 <log-system-exceptions value="true"/>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:io:1.1">
+            <subsystem xmlns="urn:wildfly:elytron:1.2" final-providers="combined-providers" disallowed-providers="OracleUcrypto">
+                <providers>
+                    <aggregate-providers name="combined-providers">
+                        <providers name="elytron"/>
+                        <providers name="openssl"/>
+                    </aggregate-providers>
+                    <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
+                    <provider-loader name="openssl" module="org.wildfly.openssl"/>
+                </providers>
+                <audit-logging>
+                    <file-audit-log name="local-audit" path="audit.log" relative-to="jboss.server.log.dir" format="JSON"/>
+                </audit-logging>
+                <security-domains>
+                    <security-domain name="ApplicationDomain" default-realm="ApplicationRealm" permission-mapper="default-permission-mapper">
+                        <realm name="ApplicationRealm" role-decoder="groups-to-roles"/>
+                    </security-domain>
+                </security-domains>
+                <security-realms>
+                    <identity-realm name="local" identity="$local"/>
+                    <properties-realm name="ApplicationRealm">
+                        <users-properties path="application-users.properties" relative-to="jboss.domain.config.dir" digest-realm-name="ApplicationRealm"/>
+                        <groups-properties path="application-roles.properties" relative-to="jboss.domain.config.dir"/>
+                    </properties-realm>
+                </security-realms>
+                <mappers>
+                    <simple-permission-mapper name="default-permission-mapper" mapping-mode="first">
+                        <permission-mapping>
+                            <principal name="anonymous"/>
+                            <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
+                            <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
+                            <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
+                        </permission-mapping>
+                        <permission-mapping match-all="true">
+                            <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
+                            <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
+                            <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
+                            <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
+                        </permission-mapping>
+                    </simple-permission-mapper>
+                    <constant-realm-mapper name="local" realm-name="local"/>
+                    <simple-role-decoder name="groups-to-roles" attribute="groups"/>
+                    <constant-role-mapper name="super-user-mapper">
+                        <role name="SuperUser"/>
+                    </constant-role-mapper>
+                </mappers>
+                <http>
+                    <http-authentication-factory name="application-http-authentication" http-server-mechanism-factory="global" security-domain="ApplicationDomain">
+                        <mechanism-configuration>
+                            <mechanism mechanism-name="BASIC">
+                                <mechanism-realm realm-name="Application Realm"/>
+                            </mechanism>
+                            <mechanism mechanism-name="FORM"/>
+                        </mechanism-configuration>
+                    </http-authentication-factory>
+                    <provider-http-server-mechanism-factory name="global"/>
+                </http>
+                <sasl>
+                    <sasl-authentication-factory name="application-sasl-authentication" sasl-server-factory="configured" security-domain="ApplicationDomain">
+                        <mechanism-configuration>
+                            <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
+                            <mechanism mechanism-name="DIGEST-MD5">
+                                <mechanism-realm realm-name="ApplicationRealm"/>
+                            </mechanism>
+                        </mechanism-configuration>
+                    </sasl-authentication-factory>
+                    <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
+                        <properties>
+                            <property name="wildfly.sasl.local-user.default-user" value="$local"/>
+                        </properties>
+                    </configurable-sasl-server-factory>
+                    <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
+                        <filters>
+                            <filter provider-name="WildFlyElytron"/>
+                        </filters>
+                    </mechanism-provider-filtering-sasl-server-factory>
+                    <provider-sasl-server-factory name="global"/>
+                </sasl>
+            </subsystem>
+            <subsystem xmlns="urn:jboss:domain:io:2.0">
                 <worker name="default"/>
                 <buffer-pool name="default"/>
             </subsystem>
@@ -1447,9 +1472,6 @@
                     <distributed-cache name="dist">
                         <locking isolation="REPEATABLE_READ"/>
                         <transaction mode="BATCH"/>
-                        <file-store/>
-                    </distributed-cache>
-                    <distributed-cache name="concurrent">
                         <file-store/>
                     </distributed-cache>
                 </cache-container>
@@ -1475,7 +1497,7 @@
                     <replicated-cache name="timestamps" mode="ASYNC"/>
                 </cache-container>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:iiop-openjdk:3.0">
+            <subsystem xmlns="urn:jboss:domain:iiop-openjdk:2.0">
                 <orb socket-binding="iiop"/>
                 <initializers security="identity" transactions="spec"/>
                 <security server-requires-ssl="false" client-requires-ssl="false"/>
@@ -1501,9 +1523,9 @@
                 <cached-connection-manager/>
             </subsystem>
             <subsystem xmlns="urn:jboss:domain:jdr:1.0"/>
-            <subsystem xmlns="urn:jboss:domain:jgroups:4.1">
+            <subsystem xmlns="urn:jboss:domain:jgroups:5.0">
                 <channels default="ee">
-                    <channel name="ee" stack="udp"/>
+                    <channel name="ee" stack="udp" cluster="ejb"/>
                 </channels>
                 <stacks>
                     <stack name="udp">
@@ -1547,12 +1569,12 @@
             </subsystem>
             <subsystem xmlns="urn:jboss:domain:jsf:1.0"/>
             <subsystem xmlns="urn:jboss:domain:jsr77:1.0"/>
-            <subsystem xmlns="urn:jboss:domain:mail:2.1">
+            <subsystem xmlns="urn:jboss:domain:mail:3.0">
                 <mail-session name="default" jndi-name="java:jboss/mail/Default">
                     <smtp-server outbound-socket-binding-ref="mail-smtp"/>
                 </mail-session>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:messaging-activemq:1.1">
+            <subsystem xmlns="urn:jboss:domain:messaging-activemq:2.0">
                 <server name="default">
                     <cluster password="${jboss.messaging.cluster.password:CHANGE ME!!}"/>
                     <security-setting name="#">
@@ -1563,13 +1585,17 @@
                     <http-connector name="http-connector-throughput" socket-binding="http" endpoint="http-acceptor-throughput">
                         <param name="batch-delay" value="50"/>
                     </http-connector>
-                    <in-vm-connector name="in-vm" server-id="0"/>
+                    <in-vm-connector name="in-vm" server-id="0">
+                        <param name="buffer-pooling" value="false"/>
+                    </in-vm-connector>
                     <http-acceptor name="http-acceptor" http-listener="default"/>
                     <http-acceptor name="http-acceptor-throughput" http-listener="default">
                         <param name="batch-delay" value="50"/>
                         <param name="direct-deliver" value="false"/>
                     </http-acceptor>
-                    <in-vm-acceptor name="in-vm" server-id="0"/>
+                    <in-vm-acceptor name="in-vm" server-id="0">
+                        <param name="buffer-pooling" value="false"/>
+                    </in-vm-acceptor>
                     <broadcast-group name="bg-group1" jgroups-channel="activemq-cluster" connectors="http-connector"/>
                     <discovery-group name="dg-group1" jgroups-channel="activemq-cluster"/>
                     <cluster-connection name="my-cluster" address="jms" connector-name="http-connector" discovery-group="dg-group1"/>
@@ -1598,85 +1624,7 @@
             <subsystem xmlns="urn:jboss:domain:resource-adapters:5.0"/>
             <subsystem xmlns="urn:jboss:domain:request-controller:1.0"/>
             <subsystem xmlns="urn:jboss:domain:sar:1.0"/>
-            <subsystem xmlns="urn:wildfly:elytron:1.0" final-providers="combined-providers">
-                <providers>
-                    <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
-                    <provider-loader name="openssl" module="org.wildfly.openssl"/>
-                    <aggregate-providers name="combined-providers">
-                        <providers name="elytron"/>
-                        <providers name="openssl"/>
-                    </aggregate-providers>
-                </providers>
-                <audit-logging>
-                    <file-audit-log name="local-audit" path="audit.log" relative-to="jboss.server.log.dir" format="JSON"/>
-                </audit-logging>
-                <security-domains>
-                    <security-domain name="ApplicationDomain" default-realm="ApplicationRealm" permission-mapper="default-permission-mapper" security-event-listener="local-audit">
-                        <realm name="ApplicationRealm" role-decoder="groups-to-roles"/>
-                    </security-domain>
-                </security-domains>
-                <security-realms>
-                    <identity-realm name="local" identity="$local"/>
-                    <properties-realm name="ApplicationRealm">
-                        <users-properties path="application-users.properties" relative-to="jboss.domain.config.dir" digest-realm-name="ApplicationRealm"/>
-                        <groups-properties path="application-roles.properties" relative-to="jboss.domain.config.dir"/>
-                    </properties-realm>
-                </security-realms>
-                <mappers>
-                    <constant-permission-mapper name="default-permission-mapper">
-                        <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
-                        <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
-                        <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
-                        <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
-                    </constant-permission-mapper>
-                    <constant-realm-mapper name="local" realm-name="local"/>
-                    <simple-role-decoder name="groups-to-roles" attribute="groups"/>
-                    <constant-role-mapper name="super-user-mapper">
-                        <role name="SuperUser"/>
-                    </constant-role-mapper>
-                </mappers>
-                <http>
-                    <http-authentication-factory name="application-http-authentication" http-server-mechanism-factory="global" security-domain="ApplicationDomain">
-                        <mechanism-configuration>
-                            <mechanism mechanism-name="BASIC">
-                                <mechanism-realm realm-name="Application Realm"/>
-                            </mechanism>
-                            <mechanism mechanism-name="FORM"/>
-                        </mechanism-configuration>
-                    </http-authentication-factory>
-                    <provider-http-server-mechanism-factory name="global"/>
-                </http>
-                <sasl>
-                    <sasl-authentication-factory name="application-sasl-authentication" sasl-server-factory="configured" security-domain="ApplicationDomain">
-                        <mechanism-configuration>
-                            <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
-                            <mechanism mechanism-name="DIGEST-MD5">
-                                <mechanism-realm realm-name="ApplicationRealm"/>
-                            </mechanism>
-                        </mechanism-configuration>
-                    </sasl-authentication-factory>
-                    <provider-sasl-server-factory name="global"/>
-                    <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
-                        <filters>
-                            <filter provider-name="WildFlyElytron"/>
-                        </filters>
-                    </mechanism-provider-filtering-sasl-server-factory>
-                    <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
-                        <filters>
-                            <filter>
-                                <pattern-filter value="JBOSS-LOCAL-USER"/>
-                            </filter>
-                            <filter>
-                                <pattern-filter value="DIGEST-MD5"/>
-                            </filter>
-                        </filters>
-                        <properties>
-                            <property name="wildfly.sasl.local-user.default-user" value="$local"/>
-                        </properties>
-                    </configurable-sasl-server-factory>
-                </sasl>
-            </subsystem>
-            <subsystem xmlns="urn:jboss:domain:security:3.0">
+            <subsystem xmlns="urn:jboss:domain:security:2.0">
                 <security-domains>
                     <security-domain name="other" cache-type="default">
                         <authentication>
@@ -1708,7 +1656,7 @@
                     </security-domain>
                 </security-domains>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:security-manager:3.0">
+            <subsystem xmlns="urn:jboss:domain:security-manager:1.0">
                 <deployment-permissions>
                     <maximum-set>
                         <permission class="java.security.AllPermission"/>
@@ -1722,7 +1670,7 @@
                     </singleton-policy>
                 </singleton-policies>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:transactions:3.1">
+            <subsystem xmlns="urn:jboss:domain:transactions:4.0">
                 <core-environment>
                     <process-id>
                         <uuid/>
@@ -1741,7 +1689,7 @@
                         <location name="/" handler="welcome-content"/>
                         <filter-ref name="server-header"/>
                         <filter-ref name="x-powered-by-header"/>
-                        <http-invoker http-authentication-factory="application-http-authentication"/>
+                        <http-invoker security-realm="ApplicationRealm"/>
                     </host>
                 </server>
                 <servlet-container name="default">
@@ -1752,7 +1700,7 @@
                     <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
                 </handlers>
                 <filters>
-                    <response-header name="server-header" header-name="Server" header-value="WildFly/10"/>
+                    <response-header name="server-header" header-name="Server" header-value="WildFly/11"/>
                     <response-header name="x-powered-by-header" header-name="X-Powered-By" header-value="Undertow/1"/>
                 </filters>
             </subsystem>
@@ -1770,12 +1718,6 @@
         </profile>
         <profile name="load-balancer">
             <subsystem xmlns="urn:jboss:domain:logging:3.0">
-                <console-handler name="CONSOLE">
-                    <level name="INFO"/>
-                    <formatter>
-                        <named-formatter name="COLOR-PATTERN"/>
-                    </formatter>
-                </console-handler>
                 <periodic-rotating-file-handler name="FILE" autoflush="true">
                     <formatter>
                         <named-formatter name="PATTERN"/>
@@ -1796,7 +1738,6 @@
                 <root-logger>
                     <level name="INFO"/>
                     <handlers>
-                        <handler name="CONSOLE"/>
                         <handler name="FILE"/>
                     </handlers>
                 </root-logger>
@@ -1807,7 +1748,7 @@
                     <pattern-formatter pattern="%K{level}%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n"/>
                 </formatter>
             </subsystem>
-            <subsystem xmlns="urn:jboss:domain:io:1.1">
+            <subsystem xmlns="urn:jboss:domain:io:2.0">
                 <worker name="default"/>
                 <buffer-pool name="default"/>
             </subsystem>
